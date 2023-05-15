@@ -22,14 +22,12 @@ From FirstProject Require Import RelationalEvaluation.
     bit of auxiliary notation to hide the plumbing involved in
     repeatedly matching against optional states. *)
 
-(*
 Notation "'LETOPT' x <== e1 'IN' e2"
    := (match e1 with
          | Some x => e2
          | None => None
        end)
    (right associativity, at level 60).
-*)
 
 (** 2.1. TODO: Implement ceval_step as specified. To improve readability,
                you are strongly encouraged to define auxiliary notation.
@@ -39,9 +37,15 @@ Notation "'LETOPT' x <== e1 'IN' e2"
 Fixpoint ceval_step (st : state) (c : com) (i : nat): option (state*result) :=
   match i with
   | O => None
-  | S i' =>
-  (* TODO *)
-end.
+  | S i' => match c with
+            | <{ break }> => Some(st, SBreak)
+            | <{ skip }> => Some(st, SContinue)
+            | <{ x := y }> => Some(x !-> aeval st y ; st, SContinue)
+            | <{ x ; y }> => LETOPT Some(st', _) <== ceval_step st c1 i' IN ceval_step st' c2 i', SContinue
+            | <{ if cond then exp1 else exp2 end }> => if (beval st cond) then ceval_step st exp1 i' else ceval_step st exp2 i'
+            | <{ while cond do exp end }> => if (beval st cond) then LETOPT Some(st', _) <== ceval_step st exp i' IN ceval_step st' c i' else Some(st, SContinue)
+            end.
+  end.
 
 (* The following definition is taken from the book and it can be used to
    test the step-indexed interpreter. *)
