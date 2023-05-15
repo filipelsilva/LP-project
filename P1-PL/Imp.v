@@ -165,7 +165,7 @@ Proof. reflexivity. Qed.
 
 
 (**
-  1.1. TODO: Extend the datatype with the new construct as specified.
+  1.1. Extend the datatype with the new construct as specified.
 *)
 
 (** Here is the formal definition of the abstract syntax of
@@ -174,7 +174,7 @@ Proof. reflexivity. Qed.
 
 Inductive com : Type :=
   | CSkip
-(* TODO *)
+  | CBreak
   | CAsgn (x : string) (a : aexp)
   | CSeq (c1 c2 : com)
   | CIf (b : bexp) (c1 c2 : com)
@@ -182,11 +182,10 @@ Inductive com : Type :=
 
 
 (**
-  1.2. TODO: Define new notation for the [break] statement.
+  1.2. Define new notation for the [break] statement.
 *)
-
-
-(* TODO *)
+Notation "'break'"  :=
+         CBreak (in custom com at level 0) : com_scope.
 Notation "'skip'"  :=
          CSkip (in custom com at level 0) : com_scope.
 Notation "x := y"  :=
@@ -205,9 +204,49 @@ Notation "'while' x 'do' y 'end'" :=
             (in custom com at level 89, x at level 99, y at level 99) : com_scope.
 
 (**
-  1.3. TODO: Define the programs p1 and p2 as specified in the project brief.
+  1.3. Define the programs p1 and p2 as specified in the project brief.
 *)
 
-Definition p1 := (* TODO *)
+Definition p1 := CSeq (CAsgn "X" (ANum 1)) (
+  CSeq (CAsgn "Y" (ANum 0)) (
+    CWhile (BTrue) (
+      CIf (BEq (AId "X") (ANum 0)) (
+        CBreak
+      ) (* else *) (
+        CSeq (
+          CAsgn "Y" (APlus (AId "Y") (ANum 1))
+        ) (
+          CAsgn "X" (AMinus (AId "X") (ANum 1))
+        )
+      )
+    )
+  )
+).
 
-Definition p2 := (* TODO *)
+(* TODO DOUBT only copy? *)
+(* Definition p1 := *)
+(*   X := 1; *)
+(*   Y := 0; *)
+(*   while true do *)
+(*     if X=0 then break else Y := Y+1; X := X-1 end *)
+(*   end *)
+
+Definition p2 := CSeq (CAsgn "X" (ANum 1)) (
+  CSeq (CAsgn "Y" (ANum 0)) (
+    CWhile (BNot (BEq (AId "X") (ANum 0))) (
+      CSeq (
+        CAsgn "Y" (APlus (AId "Y") (ANum 1))
+      ) (
+        CAsgn "X" (AMinus (AId "X") (ANum 1))
+      )
+    )
+  )
+).
+
+(* TODO DOUBT only copy? *)
+(* Definition p2 := *)
+(*   X := 1; *)
+(*   Y := 0; *)
+(*   while ~(X = 0) do *)
+(*     Y := Y+1; X := X-1 *)
+(*   end *)
