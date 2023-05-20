@@ -193,13 +193,11 @@ Theorem while_break_true : forall b c st st',
   exists st'', st'' =[ c ]=> st' / SBreak.
 Proof.
   intros.
-  remember (<{ while b do c end }>) as lopp eqn:Hloop.
+  remember (<{ while b do c end }>) as loop eqn:Hloop.
   induction H; inversion Hloop; subst.
-  + apply IHceval2.
-    ++ reflexivity.
-    ++ apply H0.
-  + exists st. apply H1.
-  (* TODO this last proof *)
-  (* + exists st. inversion H. subst. *)
-(* Qed. *)
-Admitted.
+  - apply IHceval2; try reflexivity; try assumption.
+  - exists st. assumption.
+  - destruct (beval st b).
+    + inversion H.
+    + inversion H0.
+Qed.
