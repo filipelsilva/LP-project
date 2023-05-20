@@ -29,9 +29,9 @@ Notation "'LETOPT' x <== e1 'IN' e2"
        end)
    (right associativity, at level 60).
 
-(** 2.1. TODO: Implement ceval_step as specified. To improve readability,
-               you are strongly encouraged to define auxiliary notation.
-               See the notation LETOPT commented above (or in the ImpCEval chapter).
+(** 2.1. Implement ceval_step as specified. To improve readability,
+         you are strongly encouraged to define auxiliary notation.
+         See the notation LETOPT commented above (or in the ImpCEval chapter).
 *)
 
 Fixpoint ceval_step (st : state) (c : com) (i : nat): option (state*result) :=
@@ -73,27 +73,24 @@ Proof. reflexivity. Qed.
              Add a succint explanation in your own words of why `equivalence1` and `inequivalence1` are valid.
 *)
 Theorem equivalence1: forall st c,
-(exists i0,
-forall i1, i1>=i0 ->
-ceval_step st <{ break; c }> i1
-=
-ceval_step st <{ break; skip }> i1
-).
+  (exists i0, forall i1, i1>=i0 ->
+  ceval_step st <{ break; c }> i1 = ceval_step st <{ break; skip }> i1).
 Proof.
-  (* TODO *)
+  (* intros. induction c. *)
+  (* - exists 0. intros. reflexivity. *)
+  (*   - exists 0. intros. induction i1. *)
+  (*   + reflexivity. *)
+  (*   + admit. *)
+  (* - exists 3. intros. reflexivity. *)
+  (* - exists 1. intros. simpl. reflexivity. *)
 (* Qed. *)
 Admitted.
 
 (* TODO *)
 Theorem inequivalence1: forall st c,
-(exists i0,
-forall i1, i1>=i0 ->
-ceval_step st <{ break; c }> i1
-<>
-ceval_step st <{ skip }> i1
-).
+  (exists i0, forall i1, i1>=i0 ->
+  ceval_step st <{ break; c }> i1 <> ceval_step st <{ skip }> i1).
 Proof.
-  (* TODO *)
 (* Qed. *)
 Admitted.
 
