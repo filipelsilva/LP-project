@@ -98,8 +98,8 @@ Reserved Notation "st '=[' c ']=>' st' '/' s"
       iteration.  In either case, since [break] only terminates the
       innermost loop, [while] signals [SContinue]. *)
 
-(** 3.1. TODO: Based on the above description, complete the definition of the
-               [ceval] relation.
+(** 3.1. Based on the above description, complete the definition of the
+         [ceval] relation.
 *)
 
 Inductive ceval : com -> state -> result -> state -> Prop :=
@@ -142,10 +142,10 @@ Inductive ceval : com -> state -> result -> state -> Prop :=
 
 
 (**
-  3.2. TODO: Prove the following six properties of your definition of [ceval].
-             Note that your semantics needs to satisfy these properties: if any of
-             these properties becomes unprovable, you should revise your definition of `ceval`.
-             Add a succint comment before each property explaining the property in your own words.
+  3.2. Prove the following six properties of your definition of [ceval].
+       Note that your semantics needs to satisfy these properties: if any of
+       these properties becomes unprovable, you should revise your definition of `ceval`.
+       Add a succint comment before each property explaining the property in your own words.
 *)
 
 Theorem break_ignore : forall c st st' s,

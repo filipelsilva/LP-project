@@ -31,7 +31,7 @@ i1 <= i2 ->
 ceval_step st c i1 = Some (st', res) ->
 ceval_step st c i2 = Some (st', res).
 Proof.
-  (* TODO *)
+
 (* Qed. *)
 Admitted.
 
@@ -48,17 +48,44 @@ Theorem ceval_step__ceval: forall c st st' res,
     (exists i, ceval_step st c i = Some (st', res)) ->
     st =[ c ]=> st' / res.
 Proof.
-intros c st st' res H.
-inversion H as [i E].
-clear H.
-generalize dependent res.
-generalize dependent st'.
-generalize dependent st.
-generalize dependent c.
-induction i as [| i' ].
+  intros c st st' res H.
+  inversion H as [i E].
+  clear H.
+  generalize dependent res.
+  generalize dependent st'.
+  generalize dependent st.
+  generalize dependent c.
+  induction i as [| i' ].
 
+  - intros. inversion E.
+  - intros. destruct c; simpl in E; inversion E; subst.
+    + (* SKIP *) apply E_Skip.
+    + (* BREAK *) apply E_Break.
+    + (* ASGN *) apply E_Asgn. reflexivity.
+    + (* SEQ *) remember (ceval_step st c1 i') as step1. destruct step1.
+      ++ (* CONTINUE *) apply (E_Seq_Continue st st st' res c1 c2).
+         +++ apply IHi'. inversion Heqstep1. rewrite H1. admit.
+         +++ apply IHi'. inversion Heqstep1. admit.
+      ++ (* TODO BREAK *) apply (E_Seq_Break st st' c1 c2).
+         +++ apply IHi'. discriminate.
+         +++ apply IHi'. discriminate.
+    + (* IF *) remember (beval st b) as cond. destruct cond.
+      ++ (* TRUE *) apply (E_IfTrue st st' res b c1 c2).
+         +++ rewrite Heqcond. reflexivity.
+         +++ apply IHi'. assumption.
+      ++ (* FALSE *) apply (E_IfFalse st st' res b c1 c2).
+         +++ rewrite Heqcond. reflexivity.
+         +++ apply IHi'. assumption.
+    + (* WHILE *) remember (beval st b) as cond. destruct cond.
+      ++ (* TRUE *) remember (ceval_step st c i') as step. destruct step.
+         +++ admit.
+             (* apply E_WhileTrue_Continue. *)
+             (* ++++ rewrite Heqcond. reflexivity. *)
+             (* ++++ apply IHi'. inversion Heqstep. admit. *)
+             (* ++++ apply IHi'. inversion Heqstep. admit. *)
+         +++ admit. 
+      ++ (* FALSE *) inversion E. apply E_WhileFalse. rewrite Heqcond. rewrite H1. reflexivity.
 (* TODO *)
-
 (* Qed. *)
 Admitted.
 
