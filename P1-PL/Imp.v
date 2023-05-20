@@ -184,8 +184,7 @@ Inductive com : Type :=
 (**
   1.2. Define new notation for the [break] statement.
 *)
-Notation "'break'"  :=
-         CBreak (in custom com at level 0) : com_scope.
+Notation "'break'" := CBreak (in custom com at level 0).
 Notation "'skip'"  :=
          CSkip (in custom com at level 0) : com_scope.
 Notation "x := y"  :=
