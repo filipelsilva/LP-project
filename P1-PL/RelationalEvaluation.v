@@ -121,7 +121,7 @@ Inductive ceval : com -> state -> result -> state -> Prop :=
   | E_Seq_Continue : forall st st' st'' res c1 c2,
       st  =[ c1 ]=> st' / SContinue ->
       st' =[ c2 ]=> st'' / res ->
-      st  =[ c1 ; c2 ]=> st'' / res
+      st  =[ c1 ; c2 ]=> st'' / res (* TODO this or SContinue ??? *)
   | E_Seq_Break : forall st st' c1 c2,
       st  =[ c1 ]=> st' / SBreak ->
       st  =[ c1 ; c2 ]=> st' / SBreak
