@@ -64,11 +64,9 @@ Proof.
     + (* ASGN *) apply E_Asgn. reflexivity.
     + (* SEQ *) remember (ceval_step st c1 i') as step1. destruct step1.
       ++ (* CONTINUE *) apply (E_Seq_Continue st st st' res c1 c2).
-         +++ apply IHi'. inversion Heqstep1. rewrite H1. admit.
+         +++ apply IHi'. rewrite Heqstep1. rewrite H1. admit.
          +++ apply IHi'. inversion Heqstep1. admit.
-      ++ (* TODO BREAK *) apply (E_Seq_Break st st' c1 c2).
-         +++ apply IHi'. discriminate.
-         +++ apply IHi'. discriminate.
+      ++ (* BREAK *) inversion H0.
     + (* IF *) remember (beval st b) as cond. destruct cond.
       ++ (* TRUE *) apply (E_IfTrue st st' res b c1 c2).
          +++ rewrite Heqcond. reflexivity.
@@ -78,12 +76,16 @@ Proof.
          +++ apply IHi'. assumption.
     + (* WHILE *) remember (beval st b) as cond. destruct cond.
       ++ (* TRUE *) remember (ceval_step st c i') as step. destruct step.
-         +++ admit.
-             (* apply E_WhileTrue_Continue. *)
+         (* +++ admit. *)
+         +++ (* CONTINUE *) apply (E_WhileTrue_Continue st st st' b c).
              (* ++++ rewrite Heqcond. reflexivity. *)
              (* ++++ apply IHi'. inversion Heqstep. admit. *)
              (* ++++ apply IHi'. inversion Heqstep. admit. *)
-         +++ admit. 
+         (* +++ apply (E_WhileTrue_Continue st st st' b c). *)
+             (* ++++ rewrite Heqcond. reflexivity. *)
+             (* ++++ apply IHi'. inversion Heqstep. admit. *)
+             (* ++++ apply IHi'. inversion Heqstep. admit. *)
+         +++ inversion H0.
       ++ (* FALSE *) inversion E. apply E_WhileFalse. rewrite Heqcond. rewrite H1. reflexivity.
 (* TODO *)
 (* Qed. *)
