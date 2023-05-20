@@ -99,7 +99,7 @@ Reserved Notation "st '=[' c ']=>' st' '/' s"
       innermost loop, [while] signals [SContinue]. *)
 
 (** 3.1. TODO: Based on the above description, complete the definition of the
-               [ceval] relation. 
+               [ceval] relation.
 *)
 
 Inductive ceval : com -> state -> result -> state -> Prop :=
@@ -111,10 +111,10 @@ Inductive ceval : com -> state -> result -> state -> Prop :=
   where "st '=[' c ']=>' st' '/' s" := (ceval c st s st').
 
 
-(** 
+(**
   3.2. TODO: Prove the following six properties of your definition of [ceval].
-             Note that your semantics needs to satisfy these properties: if any of 
-             these properties becomes unprovable, you should revise your definition of `ceval`. 
+             Note that your semantics needs to satisfy these properties: if any of
+             these properties becomes unprovable, you should revise your definition of `ceval`.
              Add a succint comment before each property explaining the property in your own words.
 *)
 
@@ -123,14 +123,16 @@ Theorem break_ignore : forall c st st' s,
      st = st'.
 Proof.
   (* TODO *)
-Qed.
+(* Qed. *)
+Admitted.
 
 Theorem while_continue : forall b c st st' s,
   st =[ while b do c end ]=> st' / s ->
   s = SContinue.
 Proof.
   (* TODO *)
-Qed.
+(* Qed. *)
+Admitted.
 
 Theorem while_stops_on_break : forall b c st st',
   beval st b = true ->
@@ -138,7 +140,8 @@ Theorem while_stops_on_break : forall b c st st',
   st =[ while b do c end ]=> st' / SContinue.
 Proof.
   (* TODO *)
-Qed.
+(* Qed. *)
+Admitted.
 
 Theorem seq_continue : forall c1 c2 st st' st'',
   st =[ c1 ]=> st' / SContinue ->
@@ -146,14 +149,16 @@ Theorem seq_continue : forall c1 c2 st st' st'',
   st =[ c1 ; c2 ]=> st'' / SContinue.
 Proof.
   (* TODO *)
-Qed.
+(* Qed. *)
+Admitted.
 
 Theorem seq_stops_on_break : forall c1 c2 st st',
   st =[ c1 ]=> st' / SBreak ->
   st =[ c1 ; c2 ]=> st' / SBreak.
 Proof.
   (* TODO *)
-Qed.
+(* Qed. *)
+Admitted.
 
 Theorem while_break_true : forall b c st st',
   st =[ while b do c end ]=> st' / SContinue ->
@@ -161,4 +166,5 @@ Theorem while_break_true : forall b c st st',
   exists st'', st'' =[ c ]=> st' / SBreak.
 Proof.
   (* TODO *)
-Qed.
+(* Qed. *)
+Admitted.

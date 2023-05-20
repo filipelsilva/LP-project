@@ -24,7 +24,7 @@ From FirstProject Require Import RelationalEvaluation.
 
 Notation "'LETOPT' x <== e1 'IN' e2"
    := (match e1 with
-         | Some x => e2
+         | Some (x, _) => e2
          | None => None
        end)
    (right associativity, at level 60).
@@ -41,10 +41,10 @@ Fixpoint ceval_step (st : state) (c : com) (i : nat): option (state*result) :=
             | <{ break }> => Some(st, SBreak)
             | <{ skip }> => Some(st, SContinue)
             | <{ x := y }> => Some(x !-> aeval st y ; st, SContinue)
-            | <{ x ; y }> => LETOPT Some(st', _) <== ceval_step st c1 i' IN ceval_step st' c2 i', SContinue
+            | <{ x ; y }> => LETOPT st' <== ceval_step st x i' IN ceval_step st' y i'
             | <{ if cond then exp1 else exp2 end }> => if (beval st cond) then ceval_step st exp1 i' else ceval_step st exp2 i'
-            | <{ while cond do exp end }> => if (beval st cond) then LETOPT Some(st', _) <== ceval_step st exp i' IN ceval_step st' c i' else Some(st, SContinue)
-            end.
+            | <{ while cond do exp end }> => if (beval st cond) then LETOPT st' <== ceval_step st exp i' IN ceval_step st' c i' else Some(st, SContinue)
+            end
   end.
 
 (* The following definition is taken from the book and it can be used to
@@ -68,7 +68,7 @@ Example example_test_ceval :
 Proof. reflexivity. Qed.
 
 
-(** 
+(**
   2.2. TODO: Prove the following three properties.
              Add a succint explanation in your own words of why `equivalence1` and `inequivalence1` are valid.
 *)
@@ -81,7 +81,8 @@ ceval_step st <{ break; skip }> i1
 ).
 Proof.
   (* TODO *)
-Qed.
+(* Qed. *)
+Admitted.
 
 (* TODO *)
 Theorem inequivalence1: forall st c,
@@ -93,7 +94,8 @@ ceval_step st <{ skip }> i1
 ).
 Proof.
   (* TODO *)
-Qed.
+(* Qed. *)
+Admitted.
 
 (* TODO *)
 Theorem p1_equivalent_p2: forall st,
@@ -103,6 +105,7 @@ Theorem p1_equivalent_p2: forall st,
   ).
 Proof.
   (* TODO *)
-Qed.
+(* Qed. *)
+Admitted.
 
 
