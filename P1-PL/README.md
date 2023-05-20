@@ -1,8 +1,9 @@
 # Group Identification
 
- - FirstName LastName, IST number, Email
- - FirstName LastName, IST number, Email
- - FirstName LastName, IST number, Email
+Group 4:
+- Diogo Venâncio, 95555, diogo.costa.venancio@tecnico.ulisboa.pt
+- Diogo Ferreira, 95554, diogonevesf@tecnico.ulisboa.pt
+- Filipe Silva, 95574, filipe.ligeiro.silva@tecnico.ulisboa.pt
 
 # Implemented Features
 TODO: Identify what you have done and, in particular, **identify any missing features**.
