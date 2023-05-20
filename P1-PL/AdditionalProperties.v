@@ -157,3 +157,23 @@ apply ceval_step_more with (i2 := i1 + i2) in E1.
   -- lia.
  - lia.
  Qed.
+
+(* Explanation:
+   This proof says that for any two executions of any program with any initial
+   state, if these program and initial state are the same, the final state will
+   be the same.
+
+   Proof:
+   There has to exist, for each execution, a natural number i such that the
+   evaluation of the program over i steps leads to some result.
+   We know that for two natural numbers i1 and i2, if i1 is less than or equal
+   to i2, the execution of a program over i1 steps will produce the same
+   results as an execution of i2 steps over the same program.
+   Therefore, we can say that the execution of a program over i1 steps
+   will be the same as the execution of i1 + i2 steps over the same program.
+   We will have two cases:
+   - st1 = st2: to prove this, we can say that for any two numbers, the
+   expression can be rewritten such that i1 <= i2, and therefore it is proven.
+   - i1 <= i2: the execution of i1 steps will be the same as the execution of
+   i2 steps, as said before. Proven.
+ *)
