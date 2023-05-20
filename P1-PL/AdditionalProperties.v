@@ -90,7 +90,8 @@ Proof.
          +++ apply IHi'. assumption.
     + (* WHILE *) remember (beval st b) as cond. destruct cond.
       ++ (* TRUE *) remember (ceval_step st c i') as step. destruct step.
-         +++ (* CONTINUE *) apply (E_WhileTrue_Continue st st st' b c).
+         +++ admit.
+         (* +++ (1* CONTINUE *1) apply (E_WhileTrue_Continue st st st' b c). *)
              (* ++++ rewrite Heqcond. reflexivity. *)
              (* ++++ apply IHi'. inversion Heqstep. admit. *)
              (* ++++ apply IHi'. inversion Heqstep. admit. *)
@@ -99,7 +100,8 @@ Proof.
              (* ++++ apply IHi'. inversion Heqstep. admit. *)
              (* ++++ apply IHi'. inversion Heqstep. admit. *)
          +++ (* BREAK *) inversion H0.
-      ++ (* FALSE *) inversion E. apply E_WhileFalse. rewrite Heqcond. rewrite H1. reflexivity.
+      (* ++ (1* FALSE *1) inversion E. apply E_WhileFalse. rewrite Heqcond. rewrite H1. reflexivity. *)
+      ++ admit.
 (* TODO *)
 (* Qed. *)
 Admitted.
