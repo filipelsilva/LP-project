@@ -105,8 +105,38 @@ Reserved Notation "st '=[' c ']=>' st' '/' s"
 Inductive ceval : com -> state -> result -> state -> Prop :=
   | E_Skip : forall st,
       st =[ CSkip ]=> st / SContinue
-
-  (* TODO *)
+  | E_Break : forall st,
+      st =[ CBreak ]=> st / SBreak
+  | E_Asgn : forall st a n x,
+      aeval st a = n ->
+      st =[ x := a ]=> (x !-> n ; st) / SContinue
+  | E_IfTrue : forall st st' res b c1 c2,
+      beval st b = true ->
+      st =[ c1 ]=> st' / res ->
+      st =[ if b then c1 else c2 end]=> st' / res
+  | E_IfFalse : forall st st' res b c1 c2,
+      beval st b = false ->
+      st =[ c2 ]=> st' / res ->
+      st =[ if b then c1 else c2 end]=> st' / res
+  | E_Seq_Continue : forall st st' st'' res c1 c2,
+      st  =[ c1 ]=> st' / SContinue ->
+      st' =[ c2 ]=> st'' / res ->
+      st  =[ c1 ; c2 ]=> st'' / res
+  | E_Seq_Break : forall st st' c1 c2,
+      st  =[ c1 ]=> st' / SBreak ->
+      st  =[ c1 ; c2 ]=> st' / SBreak
+  | E_WhileTrue_Continue : forall st st' st'' b c,
+      beval st b = true ->
+      st  =[ c ]=> st' / SContinue ->
+      st' =[ while b do c end ]=> st'' / SContinue ->
+      st  =[ while b do c end ]=> st'' / SContinue
+  | E_WhileTrue_Break : forall st st' b c,
+      beval st b = true ->
+      st =[ c ]=> st' / SBreak ->
+      st =[ while b do c end ]=> st' / SContinue
+  | E_WhileFalse : forall st b c,
+      beval st b = false ->
+      st =[ while b do c end ]=> st / SContinue
 
   where "st '=[' c ']=>' st' '/' s" := (ceval c st s st').
 
@@ -122,49 +152,54 @@ Theorem break_ignore : forall c st st' s,
      st =[ break; c ]=> st' / s ->
      st = st'.
 Proof.
-  (* TODO *)
-(* Qed. *)
-Admitted.
+  intros. inversion H; subst.
+  - inversion H2.
+  - inversion H5. reflexivity.
+Qed.
 
 Theorem while_continue : forall b c st st' s,
   st =[ while b do c end ]=> st' / s ->
   s = SContinue.
 Proof.
-  (* TODO *)
-(* Qed. *)
-Admitted.
+  intros. inversion H; subst; reflexivity.
+Qed.
 
 Theorem while_stops_on_break : forall b c st st',
   beval st b = true ->
   st =[ c ]=> st' / SBreak ->
   st =[ while b do c end ]=> st' / SContinue.
 Proof.
-  (* TODO *)
-(* Qed. *)
-Admitted.
+  intros. apply E_WhileTrue_Break; assumption.
+Qed.
 
 Theorem seq_continue : forall c1 c2 st st' st'',
   st =[ c1 ]=> st' / SContinue ->
   st' =[ c2 ]=> st'' / SContinue ->
   st =[ c1 ; c2 ]=> st'' / SContinue.
 Proof.
-  (* TODO *)
-(* Qed. *)
-Admitted.
+  intros. apply (E_Seq_Continue st st' st'' SContinue c1 c2); assumption.
+Qed.
 
 Theorem seq_stops_on_break : forall c1 c2 st st',
   st =[ c1 ]=> st' / SBreak ->
   st =[ c1 ; c2 ]=> st' / SBreak.
 Proof.
-  (* TODO *)
-(* Qed. *)
-Admitted.
+  intros. apply E_Seq_Break. assumption.
+Qed.
 
 Theorem while_break_true : forall b c st st',
   st =[ while b do c end ]=> st' / SContinue ->
   beval st' b = true ->
   exists st'', st'' =[ c ]=> st' / SBreak.
 Proof.
-  (* TODO *)
+  intros.
+  remember (<{ while b do c end }>) as lopp eqn:Hloop.
+  induction H; inversion Hloop; subst.
+  + apply IHceval2.
+    ++ reflexivity.
+    ++ apply H0.
+  + exists st. apply H1.
+  (* TODO this last proof *)
+  (* + exists st. inversion H. subst. *)
 (* Qed. *)
 Admitted.
