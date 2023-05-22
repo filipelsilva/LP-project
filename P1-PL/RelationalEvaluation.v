@@ -157,7 +157,7 @@ Theorem break_ignore : forall c st st' s,
      st =[ break; c ]=> st' / s ->
      st = st'.
 Proof.
-  intros. inversion H; subst.
+  intros. inversion H.
   - inversion H2.
   - inversion H5. reflexivity.
 Qed.
@@ -170,7 +170,7 @@ Theorem while_continue : forall b c st st' s,
   st =[ while b do c end ]=> st' / s ->
   s = SContinue.
 Proof.
-  intros. inversion H; subst; reflexivity.
+  intros. inversion H; reflexivity.
 Qed.
 
 (* TODO explain why?
@@ -228,11 +228,11 @@ Theorem while_break_true : forall b c st st',
   exists st'', st'' =[ c ]=> st' / SBreak.
 Proof.
   intros.
-  remember (<{ while b do c end }>) as loop eqn:Hloop.
-  induction H; inversion Hloop; subst.
-  - apply IHceval2; try reflexivity; try assumption.
+  remember (<{ while b do c end }>) as loop.
+  induction H; inversion Heqloop; subst.
+  - apply IHceval2.
+    + reflexivity.
+    + assumption.
   - exists st. assumption.
-  - destruct (beval st b).
-    + inversion H.
-    + inversion H0.
+  - rewrite H in H0. inversion H0.
 Qed.

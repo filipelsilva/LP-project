@@ -149,23 +149,6 @@ Qed.
 (* TODO: Write/explain the following proof in natural language,
          using your own words. *)
 
-Theorem ceval_deterministic' : forall c st st1 st2 res1 res2,
-   st =[ c ]=> st1 / res1 ->
-   st =[ c ]=> st2 / res2 ->
-   st1 = st2.
-Proof.
-intros c st st1 st2 res1 res2 He1 He2.
-apply ceval__ceval_step in He1.
-apply ceval__ceval_step in He2.
-inversion He1 as [i1 E1].
-inversion He2 as [i2 E2].
-apply ceval_step_more with (i2 := i1 + i2) in E1.
- - apply ceval_step_more with (i2 := i1 + i2) in E2.
-  -- rewrite E1 in E2. inversion E2. reflexivity.
-  -- lia.
- - lia.
- Qed.
-
 (* Explanation:
    This proof says that for any two executions of any program with any initial
    state, if these program and initial state are the same, the final state will
@@ -185,3 +168,20 @@ apply ceval_step_more with (i2 := i1 + i2) in E1.
    - i1 <= i2: the execution of i1 steps will be the same as the execution of
    i2 steps, as said before. Proven.
  *)
+
+Theorem ceval_deterministic' : forall c st st1 st2 res1 res2,
+   st =[ c ]=> st1 / res1 ->
+   st =[ c ]=> st2 / res2 ->
+   st1 = st2.
+Proof.
+intros c st st1 st2 res1 res2 He1 He2.
+apply ceval__ceval_step in He1.
+apply ceval__ceval_step in He2.
+inversion He1 as [i1 E1].
+inversion He2 as [i2 E2].
+apply ceval_step_more with (i2 := i1 + i2) in E1.
+ - apply ceval_step_more with (i2 := i1 + i2) in E2.
+  -- rewrite E1 in E2. inversion E2. reflexivity.
+  -- lia.
+ - lia.
+ Qed.
