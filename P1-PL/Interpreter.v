@@ -30,6 +30,14 @@ Notation "'LETOPT' x <== e1 'IN' e2"
        end)
    (right associativity, at level 60).
 
+Notation "'LETOPT_WHILE' x <== e1 'IN' e2"
+   := (match e1 with
+         | Some (x, SContinue) => e2
+         | Some (x, SBreak) => Some(x, SContinue)
+         | None => None
+       end)
+   (right associativity, at level 60).
+
 (** 2.1. Implement ceval_step as specified. To improve readability,
          you are strongly encouraged to define auxiliary notation.
          See the notation LETOPT commented above (or in the ImpCEval chapter).
@@ -44,13 +52,7 @@ Fixpoint ceval_step (st : state) (c : com) (i : nat): option (state*result) :=
             | <{ x := y }> => Some(x !-> aeval st y ; st, SContinue)
             | <{ x ; y }> => LETOPT st' <== ceval_step st x i' IN ceval_step st' y i'
             | <{ if cond then exp1 else exp2 end }> => if (beval st cond) then ceval_step st exp1 i' else ceval_step st exp2 i'
-            | <{ while cond do exp end }> => if (beval st cond) then
-            match ceval_step st exp i' with
-            | None => None
-            | Some (x, SBreak) => Some(x, SContinue)
-            | Some (x, SContinue) => ceval_step x c i'
-            end
-            else Some(st, SContinue) end
+            | <{ while cond do exp end }> => if (beval st cond) then LETOPT_WHILE st' <== ceval_step st exp i' IN ceval_step st' c i' else Some(st, SContinue) end
   end.
 
 (* The following definition is taken from the book and it can be used to
