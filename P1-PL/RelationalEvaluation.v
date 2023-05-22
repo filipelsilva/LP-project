@@ -121,7 +121,7 @@ Inductive ceval : com -> state -> result -> state -> Prop :=
   | E_Seq_Continue : forall st st' st'' res c1 c2,
       st  =[ c1 ]=> st' / SContinue ->
       st' =[ c2 ]=> st'' / res ->
-      st  =[ c1 ; c2 ]=> st'' / res (* TODO this or SContinue ??? *)
+      st  =[ c1 ; c2 ]=> st'' / res
   | E_Seq_Break : forall st st' c1 c2,
       st  =[ c1 ]=> st' / SBreak ->
       st  =[ c1 ; c2 ]=> st' / SBreak
@@ -148,6 +148,11 @@ Inductive ceval : com -> state -> result -> state -> Prop :=
        Add a succint comment before each property explaining the property in your own words.
 *)
 
+(* TODO explain why?
+   For any program c, states st and st' and result s, if a program <{ break; c
+   }> is ran on an initial state st and turns it into the state st', then st is
+   the same as st'.
+*)
 Theorem break_ignore : forall c st st' s,
      st =[ break; c ]=> st' / s ->
      st = st'.
@@ -157,6 +162,10 @@ Proof.
   - inversion H5. reflexivity.
 Qed.
 
+(* TODO explain why?
+   For any binary expression b, program c, states st and st' and result s, if a
+   program <{ while b do c end }> is ran, its result will always be SContinue. 
+*)
 Theorem while_continue : forall b c st st' s,
   st =[ while b do c end ]=> st' / s ->
   s = SContinue.
@@ -164,6 +173,12 @@ Proof.
   intros. inversion H; subst; reflexivity.
 Qed.
 
+(* TODO explain why?
+   For any binary expression b, program c and states st and st', if b evaluates
+   to true over the initial state of this while loop and program c finishes
+   with SBreak, then the program <{ while b do c end }>'s result will always be
+   SContinue. 
+*)
 Theorem while_stops_on_break : forall b c st st',
   beval st b = true ->
   st =[ c ]=> st' / SBreak ->
@@ -172,6 +187,13 @@ Proof.
   intros. apply E_WhileTrue_Break; assumption.
 Qed.
 
+(* TODO explain why?
+   For any programs c1 and c2 and states st, st' and st'', if:
+   - c1 runs, turning the state st into st', and has return code of SContinue
+   - c2 runs, turning the state st' into st'', and has return code of SContinue
+   Then <{ c1; c2 }> (the sequence of both programs) runs, turning the state
+   st' into st'', and has return code of SContinue as well.
+*)
 Theorem seq_continue : forall c1 c2 st st' st'',
   st =[ c1 ]=> st' / SContinue ->
   st' =[ c2 ]=> st'' / SContinue ->
@@ -180,6 +202,12 @@ Proof.
   intros. apply (E_Seq_Continue st st' st'' SContinue c1 c2); assumption.
 Qed.
 
+(* TODO explain why?
+   For any programs c1 and c2 and states st and st', if c1 runs, turning the
+   state st into st', and has return code of SBreak, then <{ c1; c2 }> (the
+   sequence of both programs) runs, turning the state st' into st', and has
+   return code of SBreak as well (c2 is never ran).
+*)
 Theorem seq_stops_on_break : forall c1 c2 st st',
   st =[ c1 ]=> st' / SBreak ->
   st =[ c1 ; c2 ]=> st' / SBreak.
@@ -187,6 +215,13 @@ Proof.
   intros. apply E_Seq_Break. assumption.
 Qed.
 
+(* TODO explain why?
+   For any binary expression b, program c and states st and st', if the program
+   <{ while b do c end }>'s result is SContinue and b evaluates to true over
+   the final state of this while loop, then there has to exist a state st''
+   such that the execution of program c over this state results in the state
+   st' with a result of SBreak.
+*)
 Theorem while_break_true : forall b c st st',
   st =[ while b do c end ]=> st' / SContinue ->
   beval st' b = true ->
