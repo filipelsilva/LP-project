@@ -79,6 +79,15 @@ Proof. reflexivity. Qed.
   2.2.  Prove the following three properties.
         Add a succint explanation in your own words of why `equivalence1` and `inequivalence1` are valid.
 *)
+
+(*
+   This theorem is valid, because after a break (outside of a while, that is)
+   no more code is gonna be executed; the program stops.
+   Therefore, there exists at least one natural number n such that the
+   evaluation of the programs <{ break; c }> (c being any program) and <{
+   break; skip }> over a same initial state st, and a number of steps larger or
+   equal to n will result in the same final state and result.
+*)
 Theorem equivalence1: forall st c,
   (exists i0, forall i1, i1>=i0 ->
   ceval_step st <{ break; c }> i1 = ceval_step st <{ break; skip }> i1).
@@ -89,6 +98,17 @@ Proof.
   simpl. reflexivity.
 Qed.
 
+(*
+   This theorem is valid, because after a break (outside of a while, that is)
+   no more code is gonna be executed; the program stops with result code
+   SBreak. However, if a program stops without it being caused by a while
+   statement, the result code will be SCOntinue.
+   Therefore, there exists at least one natural number n such that the
+   evaluation of the programs <{ break; c }> (c being any program) and <{ skip
+   }> over a same initial state st, and a number of steps larger or equal to n
+   will always result in different results (but not different final states, as
+   none of these programs does any arithmetic or assignments.
+*)
 Theorem inequivalence1: forall st c,
   (exists i0, forall i1, i1>=i0 ->
   ceval_step st <{ break; c }> i1 <> ceval_step st <{ skip }> i1).
@@ -99,7 +119,6 @@ Proof.
   simpl. discriminate.
 Qed.
 
-(* TODO *)
 Theorem p1_equivalent_p2: forall st,
   (exists i0,
     forall i1, i1>=i0 ->
