@@ -28,7 +28,7 @@ Notation "'LETOPT' x <== e1 'IN' e2"
          | Some (x, SBreak) => e1
          | None => None
        end)
-   (right associativity, at level 60, only parsing).
+   (right associativity, at level 60).
 
 (** 2.1. Implement ceval_step as specified. To improve readability,
          you are strongly encouraged to define auxiliary notation.
@@ -44,8 +44,13 @@ Fixpoint ceval_step (st : state) (c : com) (i : nat): option (state*result) :=
             | <{ x := y }> => Some(x !-> aeval st y ; st, SContinue)
             | <{ x ; y }> => LETOPT st' <== ceval_step st x i' IN ceval_step st' y i'
             | <{ if cond then exp1 else exp2 end }> => if (beval st cond) then ceval_step st exp1 i' else ceval_step st exp2 i'
-            | <{ while cond do exp end }> => if (beval st cond) then LETOPT st' <== ceval_step st exp i' IN ceval_step st' c i' else Some(st, SContinue)
+            | <{ while cond do exp end }> => if (beval st cond) then
+            match ceval_step st exp i' with
+            | None => None
+            | Some (x, SBreak) => Some(x, SContinue)
+            | Some (x, SContinue) => ceval_step x c i'
             end
+            else Some(st, SContinue) end
   end.
 
 (* The following definition is taken from the book and it can be used to
@@ -69,8 +74,8 @@ Example example_test_ceval :
 Proof. reflexivity. Qed.
 
 (**
-  2.2. TODO: Prove the following three properties.
-             Add a succint explanation in your own words of why `equivalence1` and `inequivalence1` are valid.
+  2.2.  Prove the following three properties.
+        Add a succint explanation in your own words of why `equivalence1` and `inequivalence1` are valid.
 *)
 Theorem equivalence1: forall st c,
   (exists i0, forall i1, i1>=i0 ->
@@ -106,19 +111,5 @@ Proof.
   destruct i1; try lia.
   destruct i1; try lia.
   destruct i1; try lia.
-  (* simpl. discriminate. *)
+  simpl. reflexivity.
 Qed.
-
-Definition p1 :=
-  X := 1;
-  Y := 0;
-  while true do
-    if X=0 then break else Y := Y+1; X := X-1 end
-  end.
-
-Definition p2 :=
-  X := 1;
-  Y := 0;
-  while ~(X = 0) do
-    Y := Y+1; X := X-1
-  end.
