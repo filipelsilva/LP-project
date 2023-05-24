@@ -123,31 +123,34 @@ Proof.
       + (* ; *)
         destruct (ceval_step st c1 i') eqn:Heqr1.
         ++ (* Evaluation of r1 terminates normally *)
-          admit.
-          (* apply E_Seq_Continue with s. *)
-          (*   apply IHi'. rewrite Heqr1. reflexivity. *)
-          (*   apply IHi'. assumption. *)
+           destruct p; destruct r.
+           +++ apply E_Seq_Continue with s; apply IHi'; assumption.
+           +++ destruct res.
+               ++++ inversion H1.
+               ++++ apply E_Seq_Break. apply IHi'. rewrite <- H1. assumption.
         ++ (* Otherwise -- contradiction *)
           discriminate H1.
       + (* if *)
         destruct (beval st b) eqn:Heqr.
-        * (* r = true *)
-          apply E_IfTrue. rewrite Heqr. reflexivity.
-          apply IHi'. assumption.
-        * (* r = false *)
-          apply E_IfFalse. rewrite Heqr. reflexivity.
-          apply IHi'. assumption.
-
-      + (* while *) destruct (beval st b) eqn :Heqr.
-        * (* r = true *)
-         destruct (ceval_step st c i') eqn:Heqr1.
-         { (* r1 = Some s *)
+        ++ (* r = true *)
+           apply E_IfTrue; try apply IHi'; assumption.
+        ++ (* r = false *)
+           apply E_IfFalse; try apply IHi'; assumption.
+      + (* while *) destruct (beval st b) eqn:Heqr.
+        ++ (* r = true *)
+           destruct (ceval_step st c i') eqn:Heqr1.
+           +++ (* r1 = Some s *)
+               destruct p; destruct r; destruct res.
+               ++++ apply (E_WhileTrue_Continue st s st' b c); try apply IHi'; assumption.
+               ++++ inversion H1.
+           +++ (* r1 = None *) discriminate H1.
+         { 
            apply E_WhileTrue with s. rewrite Heqr.
            reflexivity.
            apply IHi'. rewrite Heqr1. reflexivity.
            apply IHi'. assumption. }
          { (* r1 = None *) discriminate H1. }
-        * (* r = false *)
+        ++ (* r = false *)
           injection H1 as H2. rewrite <- H2.
           apply E_WhileFalse. apply Heqr.
 
