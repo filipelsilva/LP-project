@@ -142,7 +142,7 @@ Proof.
            +++ (* r1 = Some s *)
                destruct p; destruct r; destruct res.
                ++++ apply (E_WhileTrue_Continue st s st' b c); try apply IHi'; assumption.
-               ++++ admit.
+               ++++ apply IHi'. admit.
                ++++ apply E_WhileTrue_Break.
                     +++++ assumption.
                     +++++ apply IHi'. inversion H1. rewrite H0 in Heqr1. assumption.
@@ -178,7 +178,9 @@ Proof.
          +++ assumption.
          +++ rewrite H1. admit.
     + rewrite H3. destruct res.
-      ++ apply (ceval_step_more x); admit.
+      ++ apply (ceval_step_more x).
+         +++ lia.
+         +++ admit.
       ++ admit.
   - destruct IHceval. exists (S x). simpl. rewrite H0. reflexivity.
   - destruct IHceval1. destruct IHceval2. exists (S (x+x0)). simpl.
