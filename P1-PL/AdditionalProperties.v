@@ -36,8 +36,10 @@ Proof.
     simpl in Hceval. discriminate Hceval.
   - (* i1 = S i1' *)
     destruct i2 as [|i2'].
-    + inversion Hle.
-    + assert (Hle': i1' <= i2') by lia. destruct c.
+    + (* i2 = 0 *)
+      inversion Hle.
+    + (* i2 = S i2' *)
+      assert (Hle': i1' <= i2') by lia. destruct c.
       ++ (* skip *)
          simpl in Hceval. inversion Hceval.
          reflexivity.
@@ -51,17 +53,17 @@ Proof.
          simpl in Hceval. simpl.
          destruct (ceval_step st c1 i1') eqn:Heqst1'o.
          +++ (* st1'o = Some *)
-             destruct res.
-             ++++ (* st1'o = Some (st, SContinue) *)
-                  admit.
-                  (* apply (IHi1' i2') in Heqst1'o. try assumption. *)
-                  (* rewrite Heqst1'o. simpl. simpl in Hceval. *)
-                  (* apply (IHi1' i2') in Hceval; try assumption. *)
-             ++++ (* st1'o = Some (st, SBreak) *)
-                  admit.
-                  (* apply (IHi1' i2' st st' SBreak c1) in Heqst1'o. try assumption. *)
-                  (* rewrite Heqst1'o. simpl. simpl in Hceval. *)
-                  (* apply (IHi1' i2') in Hceval; try assumption. *)
+             destruct res; destruct p; destruct r.
+             ++++ apply (IHi1' i2') in Heqst1'o; try assumption.
+                  rewrite Heqst1'o. simpl. simpl in Hceval.
+                  apply (IHi1' i2') in Hceval; try assumption.
+             ++++ discriminate Hceval.
+             ++++ apply (IHi1' i2') in Heqst1'o; try assumption.
+                  rewrite Heqst1'o. simpl. simpl in Hceval.
+                  apply (IHi1' i2' _ _ SBreak _) in Hceval; try assumption.
+             ++++ apply (IHi1' i2') in Heqst1'o; try assumption.
+                  rewrite Heqst1'o. simpl. simpl in Hceval.
+                  rewrite Hceval. reflexivity.
          +++ (* st1'o = None *)
              discriminate Hceval.
       ++ (* if *)
@@ -73,21 +75,22 @@ Proof.
          destruct (beval st b); try assumption.
          destruct (ceval_step st c i1') eqn: Heqst1'o.
          +++ (* st1'o = Some *)
-             destruct res.
-             ++++ (* st1'o = Some (st, SContinue) *)
-                  admit.
-                  (* apply (IHi1' i2') in Heqst1'o; try assumption. *)
-                  (* rewrite -> Heqst1'o. simpl. simpl in Hceval. *)
-                  (* apply (IHi1' i2') in Hceval; try assumption. *)
-             ++++ (* st1'o = Some (st, SBreak) *)
-                  admit.
-                  (* apply (IHi1' i2') in Heqst1'o; try assumption. *)
-                  (* rewrite -> Heqst1'o. simpl. simpl in Hceval. *)
-                  (* apply (IHi1' i2') in Hceval; try assumption. *)
+             destruct res; destruct p; destruct r.
+             ++++ apply (IHi1' i2') in Heqst1'o; try assumption.
+                  rewrite -> Heqst1'o. simpl. simpl in Hceval.
+                  apply (IHi1' i2') in Hceval; try assumption.
+             ++++ apply (IHi1' i2') in Heqst1'o; try assumption.
+                  rewrite -> Heqst1'o. simpl. simpl in Hceval.
+                  rewrite Hceval. reflexivity.
+             ++++ apply (IHi1' i2') in Heqst1'o; try assumption.
+                  rewrite -> Heqst1'o. simpl. simpl in Hceval.
+                  apply (IHi1' i2') in Hceval; try assumption.
+             ++++ apply (IHi1' i2') in Heqst1'o; try assumption.
+                  rewrite -> Heqst1'o. simpl. simpl in Hceval.
+                  inversion Hceval.
          +++ (* i1'o = None *)
-             simpl in Hceval. discriminate Hceval.
-(* Qed. *)
-Admitted.
+             inversion Hceval.
+Qed.
 
 (* ################################################################# *)
 (** * Relational vs. Step-Indexed Evaluation *)
@@ -109,10 +112,8 @@ Proof.
   generalize dependent st.
   generalize dependent c.
   induction i as [| i' ].
-
     - (* i = 0 -- contradictory *)
     intros c st st' res H. discriminate H.
-
   - (* i = S i' *)
     intros c st st' res H.
     destruct c; simpl in H; inversion H; subst; clear H.
