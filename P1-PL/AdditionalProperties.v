@@ -142,51 +142,16 @@ Proof.
            +++ (* r1 = Some s *)
                destruct p; destruct r; destruct res.
                ++++ apply (E_WhileTrue_Continue st s st' b c); try apply IHi'; assumption.
+               ++++ admit.
+               ++++ apply E_WhileTrue_Break.
+                    +++++ assumption.
+                    +++++ apply IHi'. inversion H1. rewrite H0 in Heqr1. assumption.
                ++++ inversion H1.
            +++ (* r1 = None *) discriminate H1.
-         { 
-           apply E_WhileTrue with s. rewrite Heqr.
-           reflexivity.
-           apply IHi'. rewrite Heqr1. reflexivity.
-           apply IHi'. assumption. }
-         { (* r1 = None *) discriminate H1. }
         ++ (* r = false *)
-          injection H1 as H2. rewrite <- H2.
-          apply E_WhileFalse. apply Heqr.
-
-  (* - intros. inversion E. *)
-  (* - intros. destruct c; simpl in E; inversion E; subst; clear E. *)
-  (*   + (1* SKIP *1) apply E_Skip. *)
-  (*   + (1* BREAK *1) apply E_Break. *)
-  (*   + (1* ASGN *1) apply E_Asgn. reflexivity. *)
-  (*   + (1* SEQ *1) remember (ceval_step st c1 i') as step1. destruct step1. *)
-  (*     ++ (1* CONTINUE *1) apply E_Seq_Continue with st'; apply IHi'. *)
-  (*        (1* +++ rewrite Heqstep1. *1) *)
-  (*        +++ admit. *)
-  (*        +++ rewrite <- H0. admit. *)
-  (*     ++ (1* BREAK *1) inversion H0. *)
-  (*   + (1* IF *1) remember (beval st b) as cond. destruct cond. *)
-  (*     ++ (1* TRUE *1) apply (E_IfTrue st st' res b c1 c2). *)
-  (*        +++ rewrite Heqcond. reflexivity. *)
-  (*        +++ apply IHi'. assumption. *)
-  (*     ++ (1* FALSE *1) apply (E_IfFalse st st' res b c1 c2). *)
-  (*        +++ rewrite Heqcond. reflexivity. *)
-  (*        +++ apply IHi'. assumption. *)
-  (*   + (1* WHILE *1) remember (beval st b) as cond. destruct cond. *)
-  (*     ++ (1* TRUE *1) remember (ceval_step st c i') as step. destruct step. *)
-  (*        +++ admit. *)
-  (*        (1* +++ (2* CONTINUE *2) apply E_WhileTrue_Continue with st'. *1) *)
-  (*            (1* ++++ rewrite Heqcond. reflexivity. *1) *)
-  (*            (1* ++++ apply IHi'. inversion Heqstep. admit. *1) *)
-  (*            (1* ++++ apply IHi'. inversion Heqstep. admit. *1) *)
-  (*        (1* +++ apply (E_WhileTrue_Continue st st st' b c). *1) *)
-  (*            (1* ++++ rewrite Heqcond. reflexivity. *1) *)
-  (*            (1* ++++ apply IHi'. inversion Heqstep. admit. *1) *)
-  (*            (1* ++++ apply IHi'. inversion Heqstep. admit. *1) *)
-  (*        +++ (1* BREAK *1) inversion H0. *)
-  (*     (1* ++ (2* FALSE *2) apply E_WhileFalse. rewrite Heqcond. rewrite H1. reflexivity. *1) *)
-  (*     ++ admit. *)
-(* TODO *)
+           injection H1 as H2. rewrite <- H2. destruct res.
+           +++ apply E_WhileFalse. assumption.
+           +++ inversion H.
 (* Qed. *)
 Admitted.
 
