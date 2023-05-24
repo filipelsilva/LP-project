@@ -164,7 +164,7 @@ Qed.
 
 (* TODO explain why?
    For any binary expression b, program c, states st and st' and result s, if a
-   program <{ while b do c end }> is ran, its result will always be SContinue. 
+   program <{ while b do c end }> is ran, its result will always be SContinue.
 *)
 Theorem while_continue : forall b c st st' s,
   st =[ while b do c end ]=> st' / s ->
@@ -177,7 +177,7 @@ Qed.
    For any binary expression b, program c and states st and st', if b evaluates
    to true over the initial state of this while loop and program c finishes
    with SBreak, then the program <{ while b do c end }>'s result will always be
-   SContinue. 
+   SContinue.
 *)
 Theorem while_stops_on_break : forall b c st st',
   beval st b = true ->
