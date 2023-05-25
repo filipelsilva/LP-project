@@ -171,17 +171,17 @@ Proof.
   - destruct IHceval. exists (S x). simpl. rewrite H. assumption.
   - destruct IHceval. exists (S x). simpl. rewrite H. assumption.
   - destruct IHceval1. destruct IHceval2. exists (S (x+x0)). simpl.
-    assert (ceval_step st c1 (x+x0) = Some (st', res)).
+    assert (ceval_step st c1 (x+x0) = Some (st', SContinue)).
     + apply (ceval_step_more x).
       ++ lia.
-      ++ destruct res.
-         +++ assumption.
-         +++ admit.
+      ++ assumption.
     + rewrite H3. destruct res.
       ++ apply (ceval_step_more x0).
          +++ lia.
          +++ assumption.
-      ++ admit.
+      ++ apply (ceval_step_more x0).
+         +++ lia.
+         +++ assumption.
   - destruct IHceval. exists (S x). simpl. rewrite H0. reflexivity.
   - destruct IHceval1. destruct IHceval2. exists (S (x+x0)). simpl.
     rewrite H. assert (ceval_step st c (x+x0) = Some (st', SContinue)).
@@ -198,10 +198,7 @@ Proof.
       ++ assumption.
     + rewrite H1. reflexivity.
   - exists 1. simpl. rewrite H. reflexivity.
-(* Qed. *)
-Admitted.
-
-
+Qed.
 
 (* Note that with the above properties, we can say that both semantics are equivalent! *)
 
