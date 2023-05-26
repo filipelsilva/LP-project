@@ -206,7 +206,7 @@ Notation "'while' x 'do' y 'end'" :=
   1.3. Define the programs p1 and p2 as specified in the project brief.
 *)
 
-Definition p1 := CSeq (CAsgn "X" (ANum 1)) (
+(* Definition p1 := CSeq (CAsgn "X" (ANum 1)) (
   CSeq (CAsgn "Y" (ANum 0)) (
     CWhile (BTrue) (
       CIf (BEq (AId "X") (ANum 0)) (
@@ -220,7 +220,20 @@ Definition p1 := CSeq (CAsgn "X" (ANum 1)) (
       )
     )
   )
-).
+). *)
+
+Definition p1: com := <{
+  X := 1; 
+  Y := 0;
+  while true do
+    if X=0 then 
+      break 
+    else 
+      Y := Y+1; 
+      X := X-1 
+    end
+  end 
+}>.
 
 (* TODO DOUBT only copy? *)
 (* Definition p1 := *)
@@ -230,7 +243,7 @@ Definition p1 := CSeq (CAsgn "X" (ANum 1)) (
 (*     if X=0 then break else Y := Y+1; X := X-1 end *)
 (*   end *)
 
-Definition p2 := CSeq (CAsgn "X" (ANum 1)) (
+(* Definition p2 := CSeq (CAsgn "X" (ANum 1)) (
   CSeq (CAsgn "Y" (ANum 0)) (
     CWhile (BNot (BEq (AId "X") (ANum 0))) (
       CSeq (
@@ -240,7 +253,16 @@ Definition p2 := CSeq (CAsgn "X" (ANum 1)) (
       )
     )
   )
-).
+). *)
+
+Definition p2: com := <{
+  X := 1; 
+  Y := 0;
+  while ~(X = 0) do
+    Y := Y+1; 
+    X := X-1 
+  end
+}>.
 
 (* TODO DOUBT only copy? *)
 (* Definition p2 := *)
