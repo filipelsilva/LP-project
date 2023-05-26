@@ -142,7 +142,7 @@ Proof.
            +++ (* r1 = Some s *)
                destruct p; destruct r; destruct res.
                ++++ apply (E_WhileTrue_Continue st s st' b c); try apply IHi'; assumption.
-               ++++ admit.
+               ++++ apply IHi' in H1. inversion H1.
                ++++ apply E_WhileTrue_Break.
                     +++++ assumption.
                     +++++ apply IHi'. inversion H1. rewrite H0 in Heqr1. assumption.
@@ -152,11 +152,10 @@ Proof.
            injection H1 as H2. rewrite <- H2. destruct res.
            +++ apply E_WhileFalse. assumption.
            +++ inversion H.
-(* Qed. *)
-Admitted.
+Qed.
 
 (**
-  TODO: For the following proof, you'll need [ceval_step_more] in a
+  For the following proof, you'll need [ceval_step_more] in a
   few places, as well as some basic facts about [<=] and [plus]. *)
 
 Theorem ceval__ceval_step: forall c st st' res,
@@ -220,8 +219,8 @@ Qed.
   evaluation are the same, we can give a short proof that the
   evaluation _relation_ is deterministic. *)
 
-(* TODO: Write/explain the following proof in natural language,
-         using your own words. *)
+(* Write/explain the following proof in natural language,
+   using your own words. *)
 
 (* Explanation:
    This proof says that for any two executions of any program with any initial
