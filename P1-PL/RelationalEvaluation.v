@@ -98,73 +98,141 @@ Reserved Notation "st '=[' c ']=>' st' '/' s"
       iteration.  In either case, since [break] only terminates the
       innermost loop, [while] signals [SContinue]. *)
 
-(** 3.1. TODO: Based on the above description, complete the definition of the
-               [ceval] relation.
+(** 3.1. Based on the above description, complete the definition of the
+         [ceval] relation.
 *)
 
 Inductive ceval : com -> state -> result -> state -> Prop :=
   | E_Skip : forall st,
       st =[ CSkip ]=> st / SContinue
-
-  (* TODO *)
+  | E_Break : forall st,
+      st =[ CBreak ]=> st / SBreak
+  | E_Asgn : forall st a n x,
+      aeval st a = n ->
+      st =[ x := a ]=> (x !-> n ; st) / SContinue
+  | E_IfTrue : forall st st' res b c1 c2,
+      beval st b = true ->
+      st =[ c1 ]=> st' / res ->
+      st =[ if b then c1 else c2 end]=> st' / res
+  | E_IfFalse : forall st st' res b c1 c2,
+      beval st b = false ->
+      st =[ c2 ]=> st' / res ->
+      st =[ if b then c1 else c2 end]=> st' / res
+  | E_Seq_Continue : forall st st' st'' res c1 c2,
+      st  =[ c1 ]=> st' / SContinue ->
+      st' =[ c2 ]=> st'' / res ->
+      st  =[ c1 ; c2 ]=> st'' / res
+  | E_Seq_Break : forall st st' c1 c2,
+      st  =[ c1 ]=> st' / SBreak ->
+      st  =[ c1 ; c2 ]=> st' / SBreak
+  | E_WhileTrue_Continue : forall st st' st'' b c,
+      beval st b = true ->
+      st  =[ c ]=> st' / SContinue ->
+      st' =[ while b do c end ]=> st'' / SContinue ->
+      st  =[ while b do c end ]=> st'' / SContinue
+  | E_WhileTrue_Break : forall st st' b c,
+      beval st b = true ->
+      st =[ c ]=> st' / SBreak ->
+      st =[ while b do c end ]=> st' / SContinue
+  | E_WhileFalse : forall st b c,
+      beval st b = false ->
+      st =[ while b do c end ]=> st / SContinue
 
   where "st '=[' c ']=>' st' '/' s" := (ceval c st s st').
 
 
 (**
-  3.2. TODO: Prove the following six properties of your definition of [ceval].
-             Note that your semantics needs to satisfy these properties: if any of
-             these properties becomes unprovable, you should revise your definition of `ceval`.
-             Add a succint comment before each property explaining the property in your own words.
+  3.2. Prove the following six properties of your definition of [ceval].
+       Note that your semantics needs to satisfy these properties: if any of
+       these properties becomes unprovable, you should revise your definition of `ceval`.
+       Add a succint comment before each property explaining the property in your own words.
 *)
 
+(* TODO explain why?
+   For any program c, states st and st' and result s, if a program <{ break; c
+   }> is ran on an initial state st and turns it into the state st', then st is
+   the same as st'.
+*)
 Theorem break_ignore : forall c st st' s,
      st =[ break; c ]=> st' / s ->
      st = st'.
 Proof.
-  (* TODO *)
-(* Qed. *)
-Admitted.
+  intros. inversion H.
+  - inversion H2.
+  - inversion H5. reflexivity.
+Qed.
 
+(* TODO explain why?
+   For any binary expression b, program c, states st and st' and result s, if a
+   program <{ while b do c end }> is ran, its result will always be SContinue.
+*)
 Theorem while_continue : forall b c st st' s,
   st =[ while b do c end ]=> st' / s ->
   s = SContinue.
 Proof.
-  (* TODO *)
-(* Qed. *)
-Admitted.
+  intros. inversion H; reflexivity.
+Qed.
 
+(* TODO explain why?
+   For any binary expression b, program c and states st and st', if b evaluates
+   to true over the initial state of this while loop and program c finishes
+   with SBreak, then the program <{ while b do c end }>'s result will always be
+   SContinue.
+*)
 Theorem while_stops_on_break : forall b c st st',
   beval st b = true ->
   st =[ c ]=> st' / SBreak ->
   st =[ while b do c end ]=> st' / SContinue.
 Proof.
-  (* TODO *)
-(* Qed. *)
-Admitted.
+  intros. apply E_WhileTrue_Break; assumption.
+Qed.
 
+(* TODO explain why?
+   For any programs c1 and c2 and states st, st' and st'', if:
+   - c1 runs, turning the state st into st', and has return code of SContinue
+   - c2 runs, turning the state st' into st'', and has return code of SContinue
+   Then <{ c1; c2 }> (the sequence of both programs) runs, turning the state
+   st' into st'', and has return code of SContinue as well.
+*)
 Theorem seq_continue : forall c1 c2 st st' st'',
   st =[ c1 ]=> st' / SContinue ->
   st' =[ c2 ]=> st'' / SContinue ->
   st =[ c1 ; c2 ]=> st'' / SContinue.
 Proof.
-  (* TODO *)
-(* Qed. *)
-Admitted.
+  intros. apply (E_Seq_Continue st st' st'' SContinue c1 c2); assumption.
+Qed.
 
+(* TODO explain why?
+   For any programs c1 and c2 and states st and st', if c1 runs, turning the
+   state st into st', and has return code of SBreak, then <{ c1; c2 }> (the
+   sequence of both programs) runs, turning the state st' into st', and has
+   return code of SBreak as well (c2 is never ran).
+*)
 Theorem seq_stops_on_break : forall c1 c2 st st',
   st =[ c1 ]=> st' / SBreak ->
   st =[ c1 ; c2 ]=> st' / SBreak.
 Proof.
-  (* TODO *)
-(* Qed. *)
-Admitted.
+  intros. apply E_Seq_Break. assumption.
+Qed.
 
+(* TODO explain why?
+   For any binary expression b, program c and states st and st', if the program
+   <{ while b do c end }>'s result is SContinue and b evaluates to true over
+   the final state of this while loop, then there has to exist a state st''
+   such that the execution of program c over this state results in the state
+   st' with a result of SBreak.
+*)
 Theorem while_break_true : forall b c st st',
   st =[ while b do c end ]=> st' / SContinue ->
   beval st' b = true ->
   exists st'', st'' =[ c ]=> st' / SBreak.
 Proof.
-  (* TODO *)
-(* Qed. *)
-Admitted.
+  intros.
+  remember (<{ while b do c end }>) as loop.
+  induction H; inversion Heqloop; subst.
+  - apply IHceval2.
+    + reflexivity.
+    + assumption.
+  - exists st. assumption.
+  - rewrite H in H0. inversion H0.
+Qed.
