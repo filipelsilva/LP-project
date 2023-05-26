@@ -179,7 +179,7 @@ Qed.
    exist at least one natural number i such that the evaluation of c with
    initial state st over i steps has final state st' and result res.
 
-   Summarizing, and using the theorem 'ceval_step__ceval' above, the 
+   Summarizing, and using the theorem 'ceval_step__ceval' above, the
    two alternative definitions of evaluation are equivalent
    (the other way around this time).
  *)
