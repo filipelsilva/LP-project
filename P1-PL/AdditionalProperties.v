@@ -114,7 +114,6 @@ Qed.
    one natural number i such that if the evaluation of c with initial state st
    over i steps has final state st' and result res, then we can say that the
    program c applied to the state st outputs the state st' with result res.
-   Summarizing, the two alternative definitions of evaluation are equivalent.
  *)
 Theorem ceval_step__ceval: forall c st st' res,
     (exists i, ceval_step st c i = Some (st', res)) ->
@@ -179,7 +178,9 @@ Qed.
    applied to the state st outputs the state st' with result res, there has to
    exist at least one natural number i such that the evaluation of c with
    initial state st over i steps has final state st' and result res.
-   Summarizing, the two alternative definitions of evaluation are equivalent
+
+   Summarizing, and using the theorem 'ceval_step__ceval' above, the 
+   two alternative definitions of evaluation are equivalent
    (the other way around this time).
  *)
 Theorem ceval__ceval_step: forall c st st' res,

@@ -189,10 +189,10 @@ Qed.
 
 (*
    For any programs c1 and c2 and states st, st' and st'', if:
-   - c1 runs, turning the state st into st', and has return code of SContinue
-   - c2 runs, turning the state st' into st'', and has return code of SContinue
-   Then <{ c1; c2 }> (the sequence of both programs) runs, turning the state
-   st' into st'', and has return code of SContinue as well.
+   - c1 runs, turns the state st into st', and returns SContinue
+   - c2 runs, turns the state st' into st'', and returns SContinue
+   Then a program composed by the sequence of both programs, <{ c1; c2 }>,
+   upon running, will turn the state st into st'', and return SContinue as well.
 *)
 Theorem seq_continue : forall c1 c2 st st' st'',
   st =[ c1 ]=> st' / SContinue ->
@@ -205,7 +205,7 @@ Qed.
 (*
    For any programs c1 and c2 and states st and st', if c1 runs, turning the
    state st into st', and has return code of SBreak, then <{ c1; c2 }> (the
-   sequence of both programs) runs, turning the state st' into st', and has
+   sequence of both programs) runs, turning the state st into st', and has
    return code of SBreak as well (c2 is never ran).
 *)
 Theorem seq_stops_on_break : forall c1 c2 st st',
