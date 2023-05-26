@@ -148,7 +148,7 @@ Inductive ceval : com -> state -> result -> state -> Prop :=
        Add a succint comment before each property explaining the property in your own words.
 *)
 
-(* TODO explain why?
+(*
    For any program c, states st and st' and result s, if a program <{ break; c
    }> is ran on an initial state st and turns it into the state st', then st is
    the same as st'.
@@ -162,7 +162,7 @@ Proof.
   - inversion H5. reflexivity.
 Qed.
 
-(* TODO explain why?
+(*
    For any binary expression b, program c, states st and st' and result s, if a
    program <{ while b do c end }> is ran, its result will always be SContinue.
 *)
@@ -173,7 +173,7 @@ Proof.
   intros. inversion H; reflexivity.
 Qed.
 
-(* TODO explain why?
+(*
    For any binary expression b, program c and states st and st', if b evaluates
    to true over the initial state of this while loop and program c finishes
    with SBreak, then the program <{ while b do c end }>'s result will always be
@@ -187,7 +187,7 @@ Proof.
   intros. apply E_WhileTrue_Break; assumption.
 Qed.
 
-(* TODO explain why?
+(*
    For any programs c1 and c2 and states st, st' and st'', if:
    - c1 runs, turning the state st into st', and has return code of SContinue
    - c2 runs, turning the state st' into st'', and has return code of SContinue
@@ -202,7 +202,7 @@ Proof.
   intros. apply (E_Seq_Continue st st' st'' SContinue c1 c2); assumption.
 Qed.
 
-(* TODO explain why?
+(*
    For any programs c1 and c2 and states st and st', if c1 runs, turning the
    state st into st', and has return code of SBreak, then <{ c1; c2 }> (the
    sequence of both programs) runs, turning the state st' into st', and has
@@ -215,7 +215,7 @@ Proof.
   intros. apply E_Seq_Break. assumption.
 Qed.
 
-(* TODO explain why?
+(*
    For any binary expression b, program c and states st and st', if the program
    <{ while b do c end }>'s result is SContinue and b evaluates to true over
    the final state of this while loop, then there has to exist a state st''

@@ -19,13 +19,22 @@ Set Default Goal Selector "!".
 
 
 (**
-  3.2. TODO: Prove all the properties below that are stated without proof.
-             Add a succint comment before each property explaining the property in your own words.
+  3.2. Prove all the properties below that are stated without proof.
+       Add a succint comment before each property explaining the property in your own words.
 *)
 
 (* ################################################################# *)
 (** * Property of the Step-Indexed Interpreter *)
 
+(*
+   For any two natural numbers (i1, i2), two states (st, st'), result (res) and
+   program (c), if i1 is less or equal to i2 and the evaluation of c with
+   initial state st over i1 steps has a final state st' and a result res, then
+   the evaluation of c with initial state st over i2 steps has the same final
+   state and result.
+   If a program acheives a certain output under i1 steps, it can acheive the
+   same output over i2 >= i1 steps.
+ *)
 Theorem ceval_step_more: forall i1 i2 st st' res c,
 i1 <= i2 ->
 ceval_step st c i1 = Some (st', res) ->
@@ -100,6 +109,13 @@ Qed.
     amount to the same thing in the end.  This section shows that this
     is the case. *)
 
+(*
+   For any program c, states st and st' and result res, there exists at least
+   one natural number i such that if the evaluation of c with initial state st
+   over i steps has final state st' and result res, then we can say that the
+   program c applied to the state st outputs the state st' with result res.
+   Summarizing, the two alternative definitions of evaluation are equivalent.
+ *)
 Theorem ceval_step__ceval: forall c st st' res,
     (exists i, ceval_step st c i = Some (st', res)) ->
     st =[ c ]=> st' / res.
@@ -158,6 +174,14 @@ Qed.
   For the following proof, you'll need [ceval_step_more] in a
   few places, as well as some basic facts about [<=] and [plus]. *)
 
+(*
+   For any program c, states st and st' and result res, if the program c
+   applied to the state st outputs the state st' with result res, there has to
+   exist at least one natural number i such that the evaluation of c with
+   initial state st over i steps has final state st' and result res.
+   Summarizing, the two alternative definitions of evaluation are equivalent
+   (the other way around this time).
+ *)
 Theorem ceval__ceval_step: forall c st st' res,
     st =[ c ]=> st' / res ->
     exists i, ceval_step st c i = Some (st', res).
@@ -222,7 +246,8 @@ Qed.
 (* Write/explain the following proof in natural language,
    using your own words. *)
 
-(* Explanation:
+(*
+   Explanation:
    This proof says that for any two executions of any program with any initial
    state, if these program and initial state are the same, the final state will
    be the same.
@@ -235,7 +260,7 @@ Qed.
    results as an execution of i2 steps over the same program.
    Therefore, we can say that the execution of a program over i1 steps
    will be the same as the execution of i1 + i2 steps over the same program.
-   We will have two cases:
+   We will have two subcases to prove:
    - st1 = st2: to prove this, we can say that for any two numbers, the
    expression can be rewritten such that i1 <= i2, and therefore it is proven.
    - i1 <= i2: the execution of i1 steps will be the same as the execution of
