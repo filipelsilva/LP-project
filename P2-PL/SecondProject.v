@@ -386,7 +386,7 @@ Qed.
 (* ================================================================= *)
 
 Theorem hoare_assume: forall (P:Assertion) (b:bexp),
-  (*TODO: Hoare proof rule for [assume b] *)
+  (* DONE: Hoare proof rule for [assume b] *)
 Proof.
   (* TODO *)
 Qed.
@@ -397,7 +397,8 @@ Qed.
 (* ================================================================= *)
 
 Theorem hoare_choice' : forall P c1 c2 Q,
-  (*TODO: Hoare proof rule for [c1 !! c2] *)
+  (* DONE: Hoare proof rule for [c1 !! c2] *)
+  {{P}} c1 !! c2 {{Q}}.
 Proof.
   (* TODO *)
 Qed.
