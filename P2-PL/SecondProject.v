@@ -164,7 +164,7 @@ Inductive ceval : com -> state -> result -> Prop :=
       st =[ c ]=> RError ->
       st =[ while b do c end ]=> RError
 
-  (* TODO done but need to check with team *)
+  (* DONE but need to check with team *)
   | E_AssertTrue : forall st b,
       beval st b = true ->
       st =[ assert b ]=> RNormal st
@@ -180,8 +180,6 @@ Inductive ceval : com -> state -> result -> Prop :=
   | E_NonDetChoice2 : forall st c1 c2 r,
       st =[ c2 ]=> r ->
       st =[ c1 !! c2 ]=> r
-  (* TODO done but need to check with team *)
-
 
 where "st '=[' c ']=>' r" := (ceval c st r).
 
@@ -217,17 +215,19 @@ Theorem assume_false: forall P Q b,
        (forall st, beval st b = false) ->
        ({{P}} assume b {{Q}}).
 Proof.
-  unfold hoare_triple. intros P Q b H st r HE HQ.
-  inversion HE. subst.
-  rewrite (H st) in H1. inversion H1.
+  (* DONE *)
+  unfold hoare_triple. intros.
+  inversion H0. rewrite H in H3. inversion H3.
 Qed.
 
 Theorem assert_implies_assume : forall P b Q,
      ({{P}} assert b {{Q}})
   -> ({{P}} assume b {{Q}}).
 Proof.
-  unfold hoare_triple. intros P b Q H st r HE HQ.
-  inversion HE. subst. specialize (H st (RNormal st)). apply H.
+  (* DONE *)
+  unfold hoare_triple. intros.
+  inversion H0.
+  specialize (H st (RNormal st)). apply H.
   - apply E_AssertTrue. assumption.
   - assumption.
 Qed.
@@ -373,12 +373,12 @@ Theorem hoare_assert: forall P (b: bexp),
   P ->> b ->
   {{P}} assert b {{P}}.
 Proof.
-  unfold "->>". intros P b Himp st st' Heval HP.
-  inversion Heval; subst.
-  - exists st. split.
-  -- reflexivity.
-  -- assumption.
-  - apply Himp in HP. rewrite HP in H0. contradict H0. discriminate.
+  (* DONE *)
+  unfold hoare_triple. unfold "->>". intros.
+  inversion H0. subst. exists st. split.
+  - reflexivity.
+  - assumption.
+  - apply H in H1. rewrite H1 in H3. inversion H3.
 Qed.
 
 (* ================================================================= *)
