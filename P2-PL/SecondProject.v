@@ -41,6 +41,8 @@ From SecondProject Require Import Imp.
 From SecondProject Require Import Hoare.
 From SecondProject Require Import Smallstep.
 
+Require Import Lia.
+
 Module SecondProject.
 
 (* In this Coq Assessment, we will extend IMP with three new commands:
@@ -426,7 +428,7 @@ Example assert_assume_example:
 Proof.
   (* TODO *)
   eapply hoare_consequence_pre.
-  - apply hoare_seq with (Q := (X = 2)%assertion).
+  - eapply hoare_seq.
   ++ eapply hoare_consequence_pre.
   +++ apply hoare_asgn.
   +++ assn_auto''. rewrite H. simpl. admit.
@@ -434,6 +436,15 @@ Proof.
   +++ apply hoare_assume.
   +++ assn_auto''. rewrite H. simpl. admit.
 Admitted.
+  (* eapply hoare_seq.
+  - eapply hoare_asgn.
+  - eapply hoare_consequence_post.
+    + apply hoare_assume.
+    + simpl. unfold assn_sub.
+    unfold "->>". intros.
+Qed. *)
+
+
 
 
 (* ################################################################# *)
@@ -471,6 +482,16 @@ Inductive cstep : (com * result)  -> (com * result) -> Prop :=
       --> <{ if b then (c1; while b do c1 end) else skip end }> / st
 
   (* TODO *)
+  | CS_AssertTrue : forall st b,
+      <{ assert true }> / RNormal st --> <{ skip }> / RNormal st
+  | CS_AssertFalse : forall st b,
+      <{ assert false }> / RError st --> <{ skip }> / RError st
+  | CS_Assume : forall st b,
+      <{ assume b }> / RNormal st --> <{ skip }> / RNormal st
+  | CS_NonDetChoice1 : forall st c1 c2,
+      <{ c1 !! c2 }> / st --> c1 / st
+  | CS_NonDetChoice2 : forall st c1 c2,
+      <{ c1 !! c2 }> / st --> c2 / st
   
 
   where " t '/' st '-->' t' '/' st' " := (cstep (t,st) (t',st')).
