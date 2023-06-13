@@ -432,20 +432,12 @@ Proof.
   (* TODO *)
   eapply hoare_consequence_pre.
   - eapply hoare_seq.
-  ++ eapply hoare_consequence_pre.
-  +++ apply hoare_asgn.
-  +++ assn_auto''. rewrite H. simpl. admit.
-  ++ eapply hoare_consequence_pre.
-  +++ apply hoare_assume.
-  +++ assn_auto''. rewrite H. simpl. admit.
+  ++ eapply hoare_asgn.
+  ++ unfold hoare_triple. intros. inversion H; subst. exists st. split.
+  +++ reflexivity.
+  +++ eauto.
+  - unfold "->>". simpl. intros. assn_auto''. rewrite H. simpl. admit.
 Admitted.
-  (* eapply hoare_seq.
-  - eapply hoare_asgn.
-  - eapply hoare_consequence_post.
-    + apply hoare_assume.
-    + simpl. unfold assn_sub.
-    unfold "->>". intros.
-Qed. *)
 
 
 (* ################################################################# *)
