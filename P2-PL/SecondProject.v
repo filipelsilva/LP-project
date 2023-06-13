@@ -217,14 +217,19 @@ Theorem assume_false: forall P Q b,
        (forall st, beval st b = false) ->
        ({{P}} assume b {{Q}}).
 Proof.
-  (* TODO *)
+  unfold hoare_triple. intros P Q b H st r HE HQ.
+  inversion HE. subst.
+  rewrite (H st) in H1. inversion H1.
 Qed.
 
 Theorem assert_implies_assume : forall P b Q,
      ({{P}} assert b {{Q}})
   -> ({{P}} assume b {{Q}}).
 Proof.
-  (* TODO *)
+  unfold hoare_triple. intros P b Q H st r HE HQ.
+  inversion HE. subst. specialize (H st (RNormal st)). apply H.
+  - apply E_AssertTrue. assumption.
+  - assumption.
 Qed.
 
 
