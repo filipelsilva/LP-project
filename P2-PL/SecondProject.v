@@ -553,7 +553,10 @@ Example prog1_example1:
 Proof.
   (* TODO *)
   eexists. split.
-  unfold prog1.
+  unfold prog1. eapply multi_step. apply CS_SeqStep.
+  - eapply CS_AssumeStep. eapply BS_Eq1. eapply AS_Id.
+  - 
+
 
   eapply multi_step. apply CS_SeqStep. 
   - apply CS_AssumeStep.
