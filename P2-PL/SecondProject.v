@@ -386,23 +386,30 @@ Qed.
 (* ================================================================= *)
 
 Theorem hoare_assume: forall (P:Assertion) (b:bexp),
-  (* DONE: Hoare proof rule for [assume b] *)
+  {{P}} assume b {{P}}.
 Proof.
-  (* TODO *)
+  (* DONE *)
+  unfold hoare_triple. intros P b st st' Heval HP.
+  inversion Heval. subst. exists st. split.
+  - reflexivity.
+  - assumption.
 Qed.
-
 
 (* ================================================================= *)
 (* EXERCISE 3.3: State and prove [hoare_choice]                      *)
 (* ================================================================= *)
 
 Theorem hoare_choice' : forall P c1 c2 Q,
-  (* DONE: Hoare proof rule for [c1 !! c2] *)
+  (* TODO: Hoare proof rule for [c1 !! c2] *)
   {{P}} c1 !! c2 {{Q}}.
 Proof.
-  (* TODO *)
-Qed.
-
+  intros. unfold hoare_triple. intros st st' Heval HP.
+  inversion Heval; subst.
+  - exists st. split.
+  ++ admit.
+  ++ admit.
+  - admit.
+Admitted.
 
 (* ================================================================= *)
 (* EXERCISE 3.4: Use the proof rules defined to prove the following  *)
