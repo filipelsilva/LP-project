@@ -480,12 +480,14 @@ Inductive cstep : (com * result)  -> (com * result) -> Prop :=
   | CS_AssumeStep : forall st b b',
       b / st -->b b' ->
       <{ assume b }> / RNormal st --> <{ assume b' }> / RNormal st
-  | CS_Assume : forall st b,
-      <{ assume skip }> / RNormal st --> <{ skip }> / RNormal st
-  | CS_NonDetChoice1 : forall st c1 c2,
+  | CS_AssumeTrue : forall st,
+      <{ assume true }> / RNormal st --> <{ skip }> / RNormal st
+  | CS_AssumeFalse : forall st b,
+      <{ assume false }> / st --> <{ assume false }> / st
+  | CS_NonDetChoice1 : forall st c1 c1' c2,
       c1 / st --> c1' / st ->
       <{ c1 !! c2 }> / st --> c1' / st
-  | CS_NonDetChoice2 : forall st c1 c2,
+  | CS_NonDetChoice2 : forall st c1 c2 c2',
       c2 / st --> c2' / st ->
       <{ c1 !! c2 }> / st --> c2' / st
 
