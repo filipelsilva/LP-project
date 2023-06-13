@@ -370,9 +370,15 @@ Qed.
 (* ================================================================= *)
 
 Theorem hoare_assert: forall P (b: bexp),
-  (*TODO: Hoare proof rule for [assert b] *)
+  P ->> b ->
+  {{P}} assert b {{P}}.
 Proof.
-  (* TODO *)
+  unfold "->>". intros P b Himp st st' Heval HP.
+  inversion Heval; subst.
+  - exists st. split.
+  -- reflexivity.
+  -- assumption.
+  - apply Himp in HP. rewrite HP in H0. contradict H0. discriminate.
 Qed.
 
 (* ================================================================= *)
