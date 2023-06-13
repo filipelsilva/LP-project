@@ -164,7 +164,7 @@ Inductive ceval : com -> state -> result -> Prop :=
       st =[ c ]=> RError ->
       st =[ while b do c end ]=> RError
 
-  (* DONE but need to check with team *)
+  (* DONE *)
   | E_AssertTrue : forall st b,
       beval st b = true ->
       st =[ assert b ]=> RNormal st
@@ -400,9 +400,9 @@ Qed.
 (* ================================================================= *)
 
 Theorem hoare_choice' : forall P c1 c2 Q,
-  (* TODO: Hoare proof rule for [c1 !! c2] *)
   {{P}} c1 !! c2 {{Q}}.
 Proof.
+  (* TODO *)
   intros. unfold hoare_triple. intros st st' Heval HP.
   inversion Heval; subst.
   - exists st. split.
@@ -417,6 +417,7 @@ Admitted.
 (*               words what this example is demonstrating.           *)                                            
 (* ================================================================= *)
 
+
 Example assert_assume_example:
   {{ X = 1 }}
   assume (X = 2);
@@ -424,9 +425,15 @@ Example assert_assume_example:
   {{ X = 42 }}.  
 Proof.
   (* TODO *)
-Qed.
-
-
+  eapply hoare_consequence_pre.
+  - apply hoare_seq with (Q := (X = 2)%assertion).
+  ++ eapply hoare_consequence_pre.
+  +++ apply hoare_asgn.
+  +++ assn_auto''. rewrite H. simpl. admit.
+  ++ eapply hoare_consequence_pre.
+  +++ apply hoare_assume.
+  +++ assn_auto''. rewrite H. simpl. admit.
+Admitted.
 
 
 (* ################################################################# *)
