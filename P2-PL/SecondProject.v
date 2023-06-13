@@ -405,12 +405,15 @@ Theorem hoare_choice' : forall P c1 c2 Q,
   {{P}} c1 !! c2 {{Q}}.
 Proof.
   (* TODO *)
-  intros. unfold hoare_triple. intros st st' Heval HP.
-  inversion Heval; subst.
+  unfold hoare_triple. intros. exists st. split.
+  - admit.
+  - admit.
+  
+  (* inversion Heval; subst.
   - exists st. split.
   ++ admit.
   ++ admit.
-  - admit.
+  - admit. *)
 Admitted.
 
 (* ================================================================= *)
@@ -443,8 +446,6 @@ Admitted.
     + simpl. unfold assn_sub.
     unfold "->>". intros.
 Qed. *)
-
-
 
 
 (* ################################################################# *)
@@ -482,17 +483,22 @@ Inductive cstep : (com * result)  -> (com * result) -> Prop :=
       --> <{ if b then (c1; while b do c1 end) else skip end }> / st
 
   (* TODO *)
-  | CS_AssertTrue : forall st b,
+  | CS_AssertStep: forall st b b',
+      b / st -->b b' ->
+      <{ assert b }> / RNormal st --> <{ assert b' }> / RNormal st
+  | CS_AssertTrue : forall st,
       <{ assert true }> / RNormal st --> <{ skip }> / RNormal st
-  | CS_AssertFalse : forall st b,
-      <{ assert false }> / RError st --> <{ skip }> / RError st
+  | CS_AssertFalse :
+      <{ assert false }> / RError --> <{ skip }> / RError
+  | CS_AssumeStep : forall st b b',
+      b / st -->b b' ->
+      <{ assume b }> / RNormal st --> <{ assume b' }> / RNormal st
   | CS_Assume : forall st b,
       <{ assume b }> / RNormal st --> <{ skip }> / RNormal st
   | CS_NonDetChoice1 : forall st c1 c2,
       <{ c1 !! c2 }> / st --> c1 / st
   | CS_NonDetChoice2 : forall st c1 c2,
       <{ c1 !! c2 }> / st --> c2 / st
-  
 
   where " t '/' st '-->' t' '/' st' " := (cstep (t,st) (t',st')).
 
@@ -553,7 +559,24 @@ Example prog1_example1:
        prog1 / RNormal (X !-> 1) -->* <{ skip }> / RNormal st'
     /\ st' X = 2.
 Proof.
-  (* TODO *)
+  eexists. split.
+  unfold prog1.
+
+  eapply multi_step. apply CS_SeqStep. 
+  - apply CS_AssumeStep.
+  apply CS_AssumeStep. admit.
+  (* apply AS_Id. apply CS_Assume. AS_Plus1. apply AS_Id. *)
+  apply CS_SeqStep. apply CS_AssStep. apply AS_Plus1. apply AS_Id.
+  eapply multi_step. apply CS_SeqStep. apply CS_AssStep. apply AS_Plus.
+  simpl. eapply multi_step. apply CS_SeqStep. apply CS_Asgn. eapply multi_step. 
+  apply CS_SeqFinish.
+
+  (* X := X + 2 *)
+  eapply multi_step. apply CS_AssStep. apply AS_Plus1. apply AS_Id.
+  eapply multi_step. apply CS_AssStep. apply AS_Plus.
+  simpl. eapply multi_step. apply CS_Asgn. eapply multi_refl.
+
+  reflexivity.
 Qed.
 
 
@@ -566,6 +589,10 @@ Lemma one_step_aeval_a: forall st a a',
   aeval st a = aeval st a'.
 Proof.
   (* TODO (Hint: you can prove this by induction on a) *)
+  intros. induction a.
+  - inversion H.
+  - admit.
+  - 
 Qed.
 
 
