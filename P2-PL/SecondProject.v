@@ -405,15 +405,10 @@ Theorem hoare_choice' : forall P c1 c2 Q,
   {{P}} c1 !! c2 {{Q}}.
 Proof.
   (* TODO *)
-  unfold hoare_triple. intros. exists st. split.
+  unfold hoare_triple. intros. exists st. inversion H; subst; split.
+  (* apply E_NonDetChoice2 with (st c1 c2 (RNormal st)) in H0. *)
   - admit.
   - admit.
-  
-  (* inversion Heval; subst.
-  - exists st. split.
-  ++ admit.
-  ++ admit.
-  - admit. *)
 Admitted.
 
 (* ================================================================= *)
@@ -430,13 +425,13 @@ Example assert_assume_example:
   {{ X = 42 }}.  
 Proof.
   (* TODO *)
-  eapply hoare_consequence_pre.
+  eapply hoare_consequence_post.
   - eapply hoare_seq.
-  ++ eapply hoare_asgn.
-  ++ unfold hoare_triple. intros. inversion H; subst. exists st. split.
-  +++ reflexivity.
-  +++ eauto.
-  - unfold "->>". simpl. intros. assn_auto''. rewrite H. simpl. admit.
+    + eapply hoare_asgn.
+    + unfold hoare_triple. intros. inversion H; subst. exists st. split.
+      ++ reflexivity.
+      ++ eauto. admit.
+  - unfold "->>". simpl. intros. assn_auto''. rewrite H. reflexivity.
 Admitted.
 
 
@@ -486,11 +481,13 @@ Inductive cstep : (com * result)  -> (com * result) -> Prop :=
       b / st -->b b' ->
       <{ assume b }> / RNormal st --> <{ assume b' }> / RNormal st
   | CS_Assume : forall st b,
-      <{ assume b }> / RNormal st --> <{ skip }> / RNormal st
+      <{ assume skip }> / RNormal st --> <{ skip }> / RNormal st
   | CS_NonDetChoice1 : forall st c1 c2,
-      <{ c1 !! c2 }> / st --> c1 / st
+      c1 / st --> c1' / st ->
+      <{ c1 !! c2 }> / st --> c1' / st
   | CS_NonDetChoice2 : forall st c1 c2,
-      <{ c1 !! c2 }> / st --> c2 / st
+      c2 / st --> c2' / st ->
+      <{ c1 !! c2 }> / st --> c2' / st
 
   where " t '/' st '-->' t' '/' st' " := (cstep (t,st) (t',st')).
 
@@ -699,7 +696,9 @@ Inductive dcom : Type :=
 | DCPost (d : dcom) (Q : Assertion)
   (* d ->> {{ Q }} *)
 | DCAssert (* TODO *) 
+  (* assert b {{ Q }} *)
 | DCAssume (* TODO *)
+  (* assume b {{ }} *)
 | DCNonDetChoice (* TODO *)
 
 (** To provide the initial precondition that goes at the very top of a
