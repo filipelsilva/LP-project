@@ -551,6 +551,7 @@ Example prog1_example1:
        prog1 / RNormal (X !-> 1) -->* <{ skip }> / RNormal st'
     /\ st' X = 2.
 Proof.
+  (* TODO *)
   eexists. split.
   unfold prog1.
 
