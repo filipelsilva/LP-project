@@ -553,8 +553,16 @@ Proof.
   (* TODO *)
   eexists. split.
   unfold prog1. eapply multi_step. apply CS_SeqStep.
-  - eapply CS_AssumeStep. eapply BS_Eq1. eapply AS_Id.
-  - 
+  eapply CS_AssumeStep. eapply BS_Eq1. eapply AS_Id.
+  eapply multi_step.
+  eapply CS_SeqStep. eapply CS_AssumeStep. eapply BS_Eq.
+  eapply multi_step. eapply CS_SeqStep. eapply CS_Assume.
+  eapply multi_step. eapply CS_SeqFinish.
+  eapply multi_step. eapply CS_SeqStep. eapply CS_NonDetChoice1.
+  eapply multi_step. eapply CS_SeqStep. eapply CS_AssStep. eapply AS_Plus1.
+  eapply AS_Id. eapply multi_step. eapply CS_SeqStep. eapply CS_AssStep.
+  eapply AS_Plus. simpl. eapply multi_step. eapply CS_SeqStep. eapply CS_Asgn.
+  eapply multi_step. eapply CS_SeqFinish. eapply multi_step. 
 
 
   eapply multi_step. apply CS_SeqStep. 
