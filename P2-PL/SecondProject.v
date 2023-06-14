@@ -589,9 +589,12 @@ Proof.
   (* TODO (Hint: you can prove this by induction on a) *)
   intros. induction a.
   - inversion H.
-  - simpl. admit.
-  - admit.
-Admitted.
+  - inversion H. simpl. reflexivity.
+  - inversion H. subst.
+    + rewrite <- IHa1.
+    + admit.
+    + reflexivity.
+  Admitted.
 
 
 (* ================================================================= *)
