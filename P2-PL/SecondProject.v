@@ -388,12 +388,12 @@ Qed.
 (* ================================================================= *)
 
 Theorem hoare_assume: forall (P:Assertion) (b:bexp),
-  {{~b \/ P}} assume b {{P}}. (* TODO Venâncio *)
+  {{~b \/ P}} assume b {{P}}.
 Proof.
   (* DONE *)
-  unfold hoare_triple. intros. inversion H0. subst. exists st. split.
-  - inversion H. subst. reflexivity.
-  - assumption.
+  unfold hoare_triple. intros. inversion H. subst. exists st. split.
+  - reflexivity.
+  - simpl in *. rewrite H2 in H0. destruct H0. contradiction. assumption.
 Qed.
 
 (* ================================================================= *)
@@ -590,10 +590,10 @@ Proof.
   - inversion H.
   - inversion H. simpl. reflexivity.
   - inversion H. subst.
-    + rewrite <- IHa1.
+    + rewrite <- IHa1. admit.
+    ++ admit.
     + admit.
-    + reflexivity.
-  Admitted.
+Admitted.
 
 
 (* ================================================================= *)
