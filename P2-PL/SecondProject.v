@@ -424,7 +424,7 @@ Example assert_assume_example:
   X := X + 1
   {{ X = 42 }}.  
 Proof.
-  (* TODO *)
+  (* DONE *)
   eapply hoare_consequence_post.
   - eapply hoare_seq.
     + eapply hoare_asgn.
