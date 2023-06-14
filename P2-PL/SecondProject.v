@@ -401,8 +401,10 @@ Qed.
 (* EXERCISE 3.3: State and prove [hoare_choice]                      *)
 (* ================================================================= *)
 
-Theorem hoare_choice' : forall P c1 c2 Q,
-  {{P}} c1 !! c2 {{Q}}.
+Theorem hoare_choice' : forall P c1 c2 Q1 Q2,
+  {{P}} c1 {{Q1}} ->>
+  {{P}} c2 {{Q2}} ->
+  {{P}} c1 !! c2 {{Q1 \/ Q2}}.
 Proof.
   (* TODO *)
   unfold hoare_triple. intros. exists st. inversion H; subst; split.
@@ -598,9 +600,9 @@ Proof.
   (* TODO (Hint: you can prove this by induction on a) *)
   intros. induction a.
   - inversion H.
+  - simpl. 
   - admit.
-  - 
-Qed.
+Admitted.
 
 
 (* ================================================================= *)
