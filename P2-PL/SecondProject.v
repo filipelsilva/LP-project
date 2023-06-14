@@ -402,16 +402,19 @@ Qed.
 (* ================================================================= *)
 
 Theorem hoare_choice' : forall P c1 c2 Q1 Q2,
-  {{P}} c1 {{Q1}} ->>
+  {{P}} c1 {{Q1}} ->
   {{P}} c2 {{Q2}} ->
   {{P}} c1 !! c2 {{Q1 \/ Q2}}.
 Proof.
-  (* TODO *)
-  unfold hoare_triple. intros. exists st. inversion H; subst; split.
-  (* apply E_NonDetChoice2 with (st c1 c2 (RNormal st)) in H0. *)
-  - admit.
-  - admit.
-Admitted.
+  (* DONE *)
+  unfold hoare_triple. intros. inversion H1. subst.
+  - specialize (H st r). destruct H; try assumption. exists x. split.
+    + inversion H. assumption.
+    + inversion H. left. assumption.
+  - specialize (H0 st r). destruct H0; try assumption. exists x. split.
+    + inversion H0. assumption.
+    + inversion H0. right. assumption.
+Qed.
 
 (* ================================================================= *)
 (* EXERCISE 3.4: Use the proof rules defined to prove the following  *)
@@ -486,24 +489,10 @@ Inductive cstep : (com * result)  -> (com * result) -> Prop :=
       <{ assume true }> / RNormal st --> <{ skip }> / RNormal st
   | CS_AssumeFalse : forall st,
       <{ assume false }> / st --> <{ assume false }> / st
-
-  (* TODO(diogo): REVIEW WITH PROOF *)
-  | CS_NonDetChoice1_prof : forall st c1 c1' c2 st',
-      c1 / st --> c1' / st' ->
-      <{ c1 !! c2 }> / st --> <{ c1' !! c2 }> / st'
-  | CS_NonDetChoice2_prof : forall st c1 c2 c2' st',
-      c2 / st --> c2' / st' ->
-      <{ c1 !! c2 }> / st --> <{ c1 !! c2' }> / st'
-  | CS_DetChoiceDone_prof : forall st,
-      <{ skip !! skip }> / st --> <{ skip }> / st
-  (* TODO(diogo): REVIEW WITH PROOF *)
-
-  | CS_NonDetChoice1 : forall st c1 c1' c2,
-      c1 / st --> c1' / st ->
-      <{ c1 !! c2 }> / st --> c1' / st
-  | CS_NonDetChoice2 : forall st c1 c2 c2',
-      c2 / st --> c2' / st ->
-      <{ c1 !! c2 }> / st --> c2' / st
+  | CS_NonDetChoice1 : forall st c1 c2,
+      <{ c1 !! c2 }> / st --> c1 / st
+  | CS_NonDetChoice2 : forall st c1 c2,
+      <{ c1 !! c2 }> / st --> c2 / st
 
   where " t '/' st '-->' t' '/' st' " := (cstep (t,st) (t',st')).
 
@@ -576,8 +565,8 @@ Proof.
   eapply multi_step. apply CS_SeqFinish. 
 
   (* (X := X + 1) !! (X := 3) *)
-  eapply multi_step. apply CS_SeqStep. apply CS_NonDetChoice1. apply CS_AssStep. 
-  apply AS_Plus1. apply AS_Id.
+  eapply multi_step. apply CS_SeqStep. apply CS_NonDetChoice1. 
+  eapply multi_step. apply CS_SeqStep. apply CS_AssStep. apply AS_Plus1. apply AS_Id.
   eapply multi_step. apply CS_SeqStep. apply CS_AssStep. apply AS_Plus. simpl.
   eapply multi_step. apply CS_SeqStep. apply CS_Asgn. eapply multi_step. apply CS_SeqFinish.
 
@@ -600,7 +589,7 @@ Proof.
   (* TODO (Hint: you can prove this by induction on a) *)
   intros. induction a.
   - inversion H.
-  - simpl. 
+  - simpl. admit.
   - admit.
 Admitted.
 
