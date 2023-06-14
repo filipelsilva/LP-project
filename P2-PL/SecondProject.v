@@ -388,7 +388,7 @@ Qed.
 (* ================================================================= *)
 
 Theorem hoare_assume: forall (P:Assertion) (b:bexp),
-  {{~b /\ P}} assume b {{P}}.
+  {{~b \/ P}} assume b {{P}}. (* TODO Venâncio *)
 Proof.
   (* DONE *)
   unfold hoare_triple. intros. inversion H0. subst. exists st. split.
