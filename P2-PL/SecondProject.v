@@ -430,9 +430,9 @@ Proof.
     + eapply hoare_asgn.
     + unfold hoare_triple. intros. inversion H; subst. exists st. split.
       ++ reflexivity.
-      ++ eauto. admit.
+      ++ assn_auto''. 
   - unfold "->>". simpl. intros. assn_auto''. rewrite H. reflexivity.
-Admitted.
+Qed.
 
 
 (* ################################################################# *)
@@ -485,21 +485,21 @@ Inductive cstep : (com * result)  -> (com * result) -> Prop :=
   | CS_AssumeFalse : forall st,
       <{ assume false }> / st --> <{ assume false }> / st
 
-  (* TODO(diogo): REVIEW WITH TEAM *)
-  | CS_NonDetChoice1 : forall st c1 c1' c2 st',
+  (* TODO(diogo): REVIEW WITH PROOF *)
+  | CS_NonDetChoice1_prof : forall st c1 c1' c2 st',
       c1 / st --> c1' / st' ->
       <{ c1 !! c2 }> / st --> <{ c1' !! c2 }> / st'
-  | CS_NonDetChoice2 : forall st c1 c2 c2' st',
+  | CS_NonDetChoice2_prof : forall st c1 c2 c2' st',
       c2 / st --> c2' / st' ->
       <{ c1 !! c2 }> / st --> <{ c1 !! c2' }> / st'
-  | CS_DetChoiceDone : forall st,
+  | CS_DetChoiceDone_prof : forall st,
       <{ skip !! skip }> / st --> <{ skip }> / st
-  (* TODO(diogo): REVIEW WITH TEAM *)
+  (* TODO(diogo): REVIEW WITH PROOF *)
 
-  | CS_NonDetChoice1_1 : forall st c1 c1' c2,
+  | CS_NonDetChoice1 : forall st c1 c1' c2,
       c1 / st --> c1' / st ->
       <{ c1 !! c2 }> / st --> c1' / st
-  | CS_NonDetChoice2_1 : forall st c1 c2 c2',
+  | CS_NonDetChoice2 : forall st c1 c2 c2',
       c2 / st --> c2' / st ->
       <{ c1 !! c2 }> / st --> c2' / st
 
@@ -574,7 +574,7 @@ Proof.
   eapply multi_step. apply CS_SeqFinish. 
 
   (* (X := X + 1) !! (X := 3) *)
-  eapply multi_step. apply CS_SeqStep. apply CS_NonDetChoice1_1. apply CS_AssStep. 
+  eapply multi_step. apply CS_SeqStep. apply CS_NonDetChoice1. apply CS_AssStep. 
   apply AS_Plus1. apply AS_Id.
   eapply multi_step. apply CS_SeqStep. apply CS_AssStep. apply AS_Plus. simpl.
   eapply multi_step. apply CS_SeqStep. apply CS_Asgn. eapply multi_step. apply CS_SeqFinish.
