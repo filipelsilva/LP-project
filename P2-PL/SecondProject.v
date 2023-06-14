@@ -372,15 +372,15 @@ Qed.
 (* ================================================================= *)
 
 Theorem hoare_assert: forall P (b: bexp),
-  P ->> b ->
-  {{P}} assert b {{P}}.
+  {{P /\ b}} assert b {{P}}.
 Proof.
   (* DONE *)
   unfold hoare_triple. unfold "->>". intros.
   inversion H0. subst. exists st. split.
-  - reflexivity.
+  - inversion H; subst.
+  ++ reflexivity.
+  ++ simpl in H0. rewrite H4 in H0. inversion H0. discriminate.
   - assumption.
-  - apply H in H1. rewrite H1 in H3. inversion H3.
 Qed.
 
 (* ================================================================= *)
@@ -388,12 +388,11 @@ Qed.
 (* ================================================================= *)
 
 Theorem hoare_assume: forall (P:Assertion) (b:bexp),
-  {{P}} assume b {{P}}.
+  {{~b /\ P}} assume b {{P}}.
 Proof.
   (* DONE *)
-  unfold hoare_triple. intros P b st st' Heval HP.
-  inversion Heval. subst. exists st. split.
-  - reflexivity.
+  unfold hoare_triple. intros. inversion H0. subst. exists st. split.
+  - inversion H. subst. reflexivity.
   - assumption.
 Qed.
 
@@ -703,11 +702,12 @@ Inductive dcom : Type :=
   (* ->> {{ P }} d *)
 | DCPost (d : dcom) (Q : Assertion)
   (* d ->> {{ Q }} *)
-| DCAssert (* TODO *) 
+| DCAssert (b : bexp) (Q : Assertion)  (* DONE *)
   (* assert b {{ Q }} *)
-| DCAssume (* TODO *)
-  (* assume b {{ }} *)
-| DCNonDetChoice (* TODO *)
+| DCAssume (b : bexp) (Q : Assertion)  (* DONE *)
+  (* assume b {{ Q }} *)
+| DCNonDetChoice (d1 d2 : dcom)  (* DONE *)
+  (* d1 !! d2 *)
 
 (** To provide the initial precondition that goes at the very top of a
     decorated program, we introduce a new type [decorated]: *)
