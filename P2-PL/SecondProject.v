@@ -469,7 +469,7 @@ Inductive cstep : (com * result)  -> (com * result) -> Prop :=
           <{while b do c1 end}> / st 
       --> <{ if b then (c1; while b do c1 end) else skip end }> / st
 
-  (* TODO *)
+  (* DONE *)
   | CS_AssertStep: forall st b b',
       b / st -->b b' ->
       <{ assert b }> / RNormal st --> <{ assert b' }> / RNormal st
@@ -482,12 +482,24 @@ Inductive cstep : (com * result)  -> (com * result) -> Prop :=
       <{ assume b }> / RNormal st --> <{ assume b' }> / RNormal st
   | CS_AssumeTrue : forall st,
       <{ assume true }> / RNormal st --> <{ skip }> / RNormal st
-  | CS_AssumeFalse : forall st b,
+  | CS_AssumeFalse : forall st,
       <{ assume false }> / st --> <{ assume false }> / st
-  | CS_NonDetChoice1 : forall st c1 c1' c2,
+
+  (* TODO(diogo): REVIEW WITH TEAM *)
+  | CS_NonDetChoice1 : forall st c1 c1' c2 st',
+      c1 / st --> c1' / st' ->
+      <{ c1 !! c2 }> / st --> <{ c1' !! c2 }> / st'
+  | CS_NonDetChoice2 : forall st c1 c2 c2' st',
+      c2 / st --> c2' / st' ->
+      <{ c1 !! c2 }> / st --> <{ c1 !! c2' }> / st'
+  | CS_DetChoiceDone : forall st,
+      <{ skip !! skip }> / st --> <{ skip }> / st
+  (* TODO(diogo): REVIEW WITH TEAM *)
+
+  | CS_NonDetChoice1_1 : forall st c1 c1' c2,
       c1 / st --> c1' / st ->
       <{ c1 !! c2 }> / st --> c1' / st
-  | CS_NonDetChoice2 : forall st c1 c2 c2',
+  | CS_NonDetChoice2_1 : forall st c1 c2 c2',
       c2 / st --> c2' / st ->
       <{ c1 !! c2 }> / st --> c2' / st
 
@@ -550,35 +562,27 @@ Example prog1_example1:
        prog1 / RNormal (X !-> 1) -->* <{ skip }> / RNormal st'
     /\ st' X = 2.
 Proof.
-  (* TODO *)
+  (* DONE *)
   eexists. split.
-  unfold prog1. eapply multi_step. apply CS_SeqStep.
-  eapply CS_AssumeStep. eapply BS_Eq1. eapply AS_Id.
-  eapply multi_step.
-  eapply CS_SeqStep. eapply CS_AssumeStep. eapply BS_Eq.
-  eapply multi_step. eapply CS_SeqStep. eapply CS_Assume.
-  eapply multi_step. eapply CS_SeqFinish.
-  eapply multi_step. eapply CS_SeqStep. eapply CS_NonDetChoice1.
-  eapply multi_step. eapply CS_SeqStep. eapply CS_AssStep. eapply AS_Plus1.
-  eapply AS_Id. eapply multi_step. eapply CS_SeqStep. eapply CS_AssStep.
-  eapply AS_Plus. simpl. eapply multi_step. eapply CS_SeqStep. eapply CS_Asgn.
-  eapply multi_step. eapply CS_SeqFinish. eapply multi_step. 
+  unfold prog1. 
+  
+  (* Sequence and Assume x = 1 *)
+  eapply multi_step. apply CS_SeqStep.
+  apply CS_AssumeStep. apply BS_Eq1. apply AS_Id. 
+  eapply multi_step. apply CS_SeqStep. apply CS_AssumeStep. apply BS_Eq. simpl. 
+  eapply multi_step. apply CS_SeqStep. apply CS_AssumeTrue. 
+  eapply multi_step. apply CS_SeqFinish. 
 
+  (* (X := X + 1) !! (X := 3) *)
+  eapply multi_step. apply CS_SeqStep. apply CS_NonDetChoice1_1. apply CS_AssStep. 
+  apply AS_Plus1. apply AS_Id.
+  eapply multi_step. apply CS_SeqStep. apply CS_AssStep. apply AS_Plus. simpl.
+  eapply multi_step. apply CS_SeqStep. apply CS_Asgn. eapply multi_step. apply CS_SeqFinish.
 
-  eapply multi_step. apply CS_SeqStep. 
-  - apply CS_AssumeStep.
-  apply CS_AssumeStep. admit.
-  (* apply AS_Id. apply CS_Assume. AS_Plus1. apply AS_Id. *)
-  apply CS_SeqStep. apply CS_AssStep. apply AS_Plus1. apply AS_Id.
-  eapply multi_step. apply CS_SeqStep. apply CS_AssStep. apply AS_Plus.
-  simpl. eapply multi_step. apply CS_SeqStep. apply CS_Asgn. eapply multi_step. 
-  apply CS_SeqFinish.
-
-  (* X := X + 2 *)
-  eapply multi_step. apply CS_AssStep. apply AS_Plus1. apply AS_Id.
-  eapply multi_step. apply CS_AssStep. apply AS_Plus.
-  simpl. eapply multi_step. apply CS_Asgn. eapply multi_refl.
-
+  (* assert (X = 2) *)
+  eapply multi_step. apply CS_AssertStep. apply BS_Eq1. apply AS_Id.
+  eapply multi_step. apply CS_AssertStep. apply BS_Eq. simpl.
+  eapply multi_step. apply CS_AssertTrue. eapply multi_refl.
   reflexivity.
 Qed.
 
