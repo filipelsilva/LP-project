@@ -1068,8 +1068,22 @@ Proof.
   - (* Post *)
     destruct H as [Hd HQ].
     eapply hoare_consequence_post; eauto.
+
   (* TODO *)
-Qed.
+  (* Assert *)
+  - eapply hoare_consequence_pre.
+    + apply hoare_assert.
+    + admit.
+
+  (* Assume *)
+  - admit.
+  
+  (* NonDetChoice *)
+  - eapply hoare_consequence_pre; eauto. specialize (IHd1 P). 
+    specialize (IHd2 P). apply hoare_choice'. 
+    ++ apply IHd1. destruct H. assumption. admit.
+    ++ admit.
+Admitted.
 
 
 (** Now that all the pieces are in place, we can define what it means
