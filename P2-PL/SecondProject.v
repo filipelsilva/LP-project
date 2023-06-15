@@ -421,7 +421,13 @@ Qed.
 (*               words what this example is demonstrating.           *)
 (* ================================================================= *)
 
-(* TODO: Add comment *)
+(*
+  If a certain state accepts the precondition that X = 1, after this program is
+  ran it lands on a state which accepts X = 42.
+  This example is demonstrating the functionality of assume when its condition
+  is false: the program has no final state, fails to evaluate and any
+  postcondition can be met.
+*)
 Example assert_assume_example:
   {{ X = 1 }}
   assume (X = 2);
