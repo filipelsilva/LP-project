@@ -1,24 +1,24 @@
 (* Programming Languages: Project 2
- * 
- * You are required to complete the 12 exercises below. 
+ *
+ * You are required to complete the 12 exercises below.
  *
  * Important:
- *  - Do not change any existing code nor the type of any function 
+ *  - Do not change any existing code nor the type of any function
  *    or theorem, otherwise you might not get any points. If in doubt, ask
  *    a member of the teaching team.
  *  - Do not delete any comments, except those marked as (*TODO*)
- *  - You can add new code or new lemmas (but make sure there's a good 
+ *  - You can add new code or new lemmas (but make sure there's a good
  *    reason for doing so)
  *  - Your proofs should be as simple and short as possible. After finishing
  *    all the required proofs, consider whether you can make them shorter and
  *    more automated.
  *
  * All you have to do is to solve the exercises that are clearly
- * marked as so (search for the string EXERCISE). 
+ * marked as so (search for the string EXERCISE).
  * You have to replace the comments (*TODO*) by your own solution.
  *
- * We assume that you will follow the established code of ethics and 
- * submit your own work. Any student might be asked to present and 
+ * We assume that you will follow the established code of ethics and
+ * submit your own work. Any student might be asked to present and
  * explain their submission.
  *
  * This component is worth 20 points. Each question
@@ -28,8 +28,8 @@
  *)
 
 
-(* We import the files from the book Software Foundations (vol. 2). 
-   To make it easier, you might want to copy this file to the same 
+(* We import the files from the book Software Foundations (vol. 2).
+   To make it easier, you might want to copy this file to the same
    directory as the book. If you have problems importing the files
    below, get in touch with the teaching team. *)
 
@@ -80,7 +80,7 @@ Inductive com : Type :=
   | CAssume (b : bexp)  (* <- new *)
   | CNonDetChoice (c1 c2: com).  (* <- new *)
 
-(* We now define notations. *)  
+(* We now define notations. *)
 Notation "'skip'"  :=
          CSkip (in custom com at level 0) : com_scope.
 Notation "x := y"  :=
@@ -418,7 +418,7 @@ Qed.
 (* ================================================================= *)
 (* EXERCISE 3.4: Use the proof rules defined to prove the following  *)
 (*               example. Also, add a comment explaining in your own *)
-(*               words what this example is demonstrating.           *)                                            
+(*               words what this example is demonstrating.           *)
 (* ================================================================= *)
 
 (* TODO: Add comment *)
@@ -426,7 +426,7 @@ Example assert_assume_example:
   {{ X = 1 }}
   assume (X = 2);
   X := X + 1
-  {{ X = 42 }}.  
+  {{ X = 42 }}.
 Proof.
   (* DONE *)
   eapply hoare_consequence_post.
@@ -434,7 +434,7 @@ Proof.
     + eapply hoare_asgn.
     + unfold hoare_triple. intros. inversion H; subst. exists st. split.
       ++ reflexivity.
-      ++ assn_auto''. 
+      ++ assn_auto''.
   - unfold "->>". simpl. intros. assn_auto''. rewrite H. reflexivity.
 Qed.
 
@@ -463,14 +463,14 @@ Inductive cstep : (com * result)  -> (com * result) -> Prop :=
       <{ skip ; c2 }> / st --> c2 / st
   | CS_IfStep : forall st b b' c1 c2,
       b / st -->b b' ->
-      <{if b then c1 else c2 end }> / RNormal st 
+      <{if b then c1 else c2 end }> / RNormal st
       --> <{ if b' then c1 else c2 end }> / RNormal st
   | CS_IfTrue : forall st c1 c2,
       <{ if true then c1 else c2 end }> / st --> c1 / st
   | CS_IfFalse : forall st c1 c2,
       <{ if false then c1 else c2 end }> / st --> c2 / st
   | CS_While : forall st b c1,
-          <{while b do c1 end}> / st 
+          <{while b do c1 end}> / st
       --> <{ if b then (c1; while b do c1 end) else skip end }> / st
 
   (* DONE *)
@@ -506,7 +506,7 @@ Notation " t '/' st '-->*' t' '/' st' " :=
 (* EXERCISE 5 (1 point): Show that the program [prog1] can           *)
 (*            successfully terminate in a state where [X=2].         *)
 (*            Use the rules defined in [cstep].                      *)
-(*            You can use [multi_step] and [multi_refl].             *) 
+(*            You can use [multi_step] and [multi_refl].             *)
 (* ################################################################# *)
 
 
@@ -525,10 +525,10 @@ Proof.
   unfold prog0.
 
   (* Sequence and X := X+1*)
-  eapply multi_step. apply CS_SeqStep. 
+  eapply multi_step. apply CS_SeqStep.
   apply CS_AssStep. apply AS_Plus1. apply AS_Id.
   eapply multi_step. apply CS_SeqStep. apply CS_AssStep. apply AS_Plus.
-  simpl. eapply multi_step. apply CS_SeqStep. apply CS_Asgn. eapply multi_step. 
+  simpl. eapply multi_step. apply CS_SeqStep. apply CS_Asgn. eapply multi_step.
   apply CS_SeqFinish.
 
   (* X := X + 2 *)
@@ -537,11 +537,11 @@ Proof.
   simpl. eapply multi_step. apply CS_Asgn. eapply multi_refl.
 
   reflexivity.
-Qed. 
+Qed.
 
-  
+
 Definition prog1 : com :=
-  <{ 
+  <{
   assume (X = 1);
   ((X := X + 1) !! (X := 3));
   assert (X = 2)
@@ -554,17 +554,17 @@ Example prog1_example1:
 Proof.
   (* DONE *)
   eexists. split.
-  unfold prog1. 
-  
+  unfold prog1.
+
   (* Sequence and Assume x = 1 *)
   eapply multi_step. apply CS_SeqStep.
-  apply CS_AssumeStep. apply BS_Eq1. apply AS_Id. 
-  eapply multi_step. apply CS_SeqStep. apply CS_AssumeStep. apply BS_Eq. simpl. 
-  eapply multi_step. apply CS_SeqStep. apply CS_AssumeTrue. 
-  eapply multi_step. apply CS_SeqFinish. 
+  apply CS_AssumeStep. apply BS_Eq1. apply AS_Id.
+  eapply multi_step. apply CS_SeqStep. apply CS_AssumeStep. apply BS_Eq. simpl.
+  eapply multi_step. apply CS_SeqStep. apply CS_AssumeTrue.
+  eapply multi_step. apply CS_SeqFinish.
 
   (* (X := X + 1) !! (X := 3) *)
-  eapply multi_step. apply CS_SeqStep. apply CS_NonDetChoice1. 
+  eapply multi_step. apply CS_SeqStep. apply CS_NonDetChoice1.
   eapply multi_step. apply CS_SeqStep. apply CS_AssStep. apply AS_Plus1. apply AS_Id.
   eapply multi_step. apply CS_SeqStep. apply CS_AssStep. apply AS_Plus. simpl.
   eapply multi_step. apply CS_SeqStep. apply CS_Asgn. eapply multi_step. apply CS_SeqFinish.
@@ -602,7 +602,7 @@ Admitted.
 
 (* We now go back to Hoare Logic and Decorated Programs. The goal is
    see how one can formalize decorated programs and mostly automate
-   the verification process. 
+   the verification process.
 
    This part is taken from the chapter "Hoare Logic, Part II":
    https://softwarefoundations.cis.upenn.edu/plf-current/Hoare2.html
@@ -1079,7 +1079,7 @@ Proof.
   - eapply hoare_consequence_pre.
     + apply hoare_assume.
     + eauto.
-  
+
   (* NonDetChoice *)
   - eapply hoare_consequence_pre; eauto.
     specialize (IHd1 P). specialize (IHd2 P). apply hoare_choice'.
@@ -1162,7 +1162,7 @@ Ltac verify_assn :=
     end;
   try eauto;
   try lia.
-    
+
 
 (** Fortunately, our [verify_assn] tactic can generally take care of
     most or all of them. *)
@@ -1311,8 +1311,8 @@ Proof. (* DONE *) verify. Qed.
 
 
 (* ################################################################# *)
-(* EXERCISE 12 (3 points):  Consider the following triple:        
-                                                                   
+(* EXERCISE 12 (3 points):  Consider the following triple:
+
        {{ X = m }}
          while 2 <= X do
            X := X - 2   !!   X := X+2
@@ -1320,7 +1320,7 @@ Proof. (* DONE *) verify. Qed.
        {{ X = parity m }}
 
     The [parity] function used in the specification is defined in
-    Coq as follows: *)   
+    Coq as follows: *)
 
 Fixpoint parity x :=
   match x with
@@ -1373,19 +1373,40 @@ Definition parity_dec_nondet (m:nat) : decorated :=
 should not be changed. Note that the code below does
 not typecheck until you decorate it correctly. *)
 <{
-  {{ X = m }}
+  {{ X = m }} ->>
+  {{ ap parity X = parity m /\ 2 <= X }}
     while 2 <= X do
+                  {{ ap parity X = parity m /\ 2 <= X }} ->>
+                  {{ (ap parity (X - 2) = parity m \/ ap parity (X + 2) = parity m) /\ 2 <= X }}
       X := X - 2
-      !! 
+                  {{ (ap parity X = parity m \/ ap parity (X + 4) = parity m) /\ 2 <= X }}
+      !!
       X := X + 2
+                  {{ (ap parity (X - 4) = parity m \/ ap parity X = parity m) /\ 2 <= X }} ->>
+                  {{ ap parity X = parity m }}
     end
+  {{ ap parity X = parity m /\ ~ (2 <= X) }} ->>
   {{ X = parity m }} }>.
-
 
 Theorem parity_outer_triple_valid_nondet : forall m,
   outer_triple_valid (parity_dec_nondet m).
-Proof. 
+Proof.
   (* TODO *)
+  intros.
+  eapply hoare_consequence_pre.
+  (* apply hoare_consequence_pre with (P' := assert ap parity X = parity m). *)
+  - eapply hoare_consequence_post.
+    + simpl. eapply hoare_while. eapply hoare_consequence_pre.
+      ++ eapply hoare_choice'.
+      +++ eapply hoare_asgn.
+      (* +++ eapply hoare_asgn.  *)
+      +++ admit.
+      ++
+      verify_assn. remember (st X) as x. rewrite <- H.
+      apply parity_ge_2. destruct x. lia. destruct x; lia.
+    + verify_assn. rewrite <- H. remember (st X) as x. destruct x.
+      trivial. destruct x. trivial. lia.
+  - verify_assn.
 Qed.
 
 
