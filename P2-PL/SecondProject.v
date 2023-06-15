@@ -702,12 +702,15 @@ Inductive dcom : Type :=
   (* ->> {{ P }} d *)
 | DCPost (d : dcom) (Q : Assertion)
   (* d ->> {{ Q }} *)
+
+(* DONE: REVIEW WITH TEAM *)
 | DCAssert (b : bexp) (Q : Assertion)  (* DONE *)
   (* assert b {{ Q }} *)
 | DCAssume (b : bexp) (Q : Assertion)  (* DONE *)
   (* assume b {{ Q }} *)
 | DCNonDetChoice (d1 d2 : dcom).  (* DONE *)
   (* d1 !! d2 *)
+(* DONE: REVIEW WITH TEAM *)
 
 (** To provide the initial precondition that goes at the very top of a
     decorated program, we introduce a new type [decorated]: *)
@@ -800,7 +803,11 @@ Fixpoint extract (d : dcom) : com :=
   | DCWhile b _ d _    => CWhile b (extract d)
   | DCPre _ d          => extract d
   | DCPost d _         => extract d
-  (* TODO *)
+  (* DONE: REVIEW WITH TEAM *)
+  | DCAssert b _         => CAssert b
+  | DCAssume b _         => CAssume b
+  | DCNonDetChoice d1 d2 => CNonDetChoice (extract d1) (extract d2)
+  (* DONE: REVIEW WITH TEAM *)
   end.
 
 Definition extract_dec (dec : decorated) : com :=
@@ -833,7 +840,11 @@ Fixpoint post (d : dcom) : Assertion :=
   | DCWhile _ _ _ Q         => Q
   | DCPre _ d               => post d
   | DCPost _ Q              => Q
-  (* TODO *)
+  (* DONE: REVIEW WITH TEAM *)
+  | DCAssert _ Q            => Q
+  | DCAssume _ Q            => Q
+  | DCNonDetChoice d1 d2    => post d1 \/ post d2
+  (* DONE: REVIEW WITH TEAM *)
   end.
 
 Definition post_dec (dec : decorated) : Assertion :=
