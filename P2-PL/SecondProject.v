@@ -1015,9 +1015,10 @@ Fixpoint verification_conditions (P : Assertion) (d : dcom) : Prop :=
 
   (* DONE: REVIEW WITH TEAM *)
   | DCAssert b Q =>
-    ((P /\ b) ->> Q)%assertion
+    (P ->> Q) /\
+    ((P /\ b) ->> P)%assertion
   | DCAssume b Q =>
-    ((~b \/ P) ->> Q)%assertion
+    ((~b \/ P) ->> P)%assertion
   | DCNonDetChoice d1 d2 =>
       verification_conditions P d1
       \/ verification_conditions P d2
@@ -1073,18 +1074,21 @@ Proof.
   (* Assert *)
   - eapply hoare_consequence_pre.
     + apply hoare_assert.
-    + admit.
+    + destruct H as [H1 H2]. unfold "->>" in *. intros.
+      specialize (H1 st). specialize (H2 st). split.
+      -- admit.
+      -- admit.
 
   (* Assume *)
   - eapply hoare_consequence_pre.
     + apply hoare_assume.
-    + eauto.
-
+    + unfold "->>" in *. intros. subst. specialize (H st). simpl. admit.
+      
+  
   (* NonDetChoice *)
-  - eapply hoare_consequence_pre; eauto.
-    specialize (IHd1 P). specialize (IHd2 P). apply hoare_choice'.
-    + apply IHd1. admit.
-    + apply IHd2. admit.
+  - eapply hoare_consequence_pre; eauto. apply hoare_choice'. 
+  -- apply IHd1.   
+    specialize (IHd1 P). specialize (IHd2 P). admit.
 Admitted.
 
 
