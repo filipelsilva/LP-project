@@ -706,7 +706,7 @@ Inductive dcom : Type :=
   (* assert b {{ Q }} *)
 | DCAssume (b : bexp) (Q : Assertion)  (* DONE *)
   (* assume b {{ Q }} *)
-| DCNonDetChoice (d1 d2 : dcom)  (* DONE *)
+| DCNonDetChoice (d1 d2 : dcom).  (* DONE *)
   (* d1 !! d2 *)
 
 (** To provide the initial precondition that goes at the very top of a
@@ -749,8 +749,21 @@ Notation "{{ P }} d"
       := (Decorated P d)
       (in custom com at level 91, P constr) : dcom_scope.
 
-
 (* TODO: notation for the three new constructs *)
+
+(* DONE: REVIEW WITH TEAM *)
+Notation "'assert' b {{ P }}" := (DCAssert b P)
+      (in custom com at level 8, 
+      b custom com at level 0, P constr) : dcom_scope.
+
+Notation "'assume' b {{ P }}" := (DCAssume b P)
+    (in custom com at level 8, 
+    b custom com at level 0, P constr) : dcom_scope.
+
+Notation "d1 !! d2" :=
+  (DCNonDetChoice d1 d2)
+    (in custom com at level 90, right associativity) : dcom_scope.
+(* DONE: REVIEW WITH TEAM *)
 
 Local Open Scope dcom_scope.
 
