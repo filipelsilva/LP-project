@@ -1374,15 +1374,14 @@ should not be changed. Note that the code below does
 not typecheck until you decorate it correctly. *)
 <{
   {{ X = m }} ->>
-  {{ ap parity X = parity m /\ 2 <= X }}
+  {{ ap parity X = parity m }}
     while 2 <= X do
                   {{ ap parity X = parity m /\ 2 <= X }} ->>
-                  {{ (ap parity (X - 2) = parity m \/ ap parity (X + 2) = parity m) /\ 2 <= X }}
+                  {{ ap parity (X - 2) = parity m }}
       X := X - 2
-                  {{ (ap parity X = parity m \/ ap parity (X + 4) = parity m) /\ 2 <= X }}
+                  {{ ap parity (X + 2) = parity m }}
       !!
       X := X + 2
-                  {{ (ap parity (X - 4) = parity m \/ ap parity X = parity m) /\ 2 <= X }} ->>
                   {{ ap parity X = parity m }}
     end
   {{ ap parity X = parity m /\ ~ (2 <= X) }} ->>
