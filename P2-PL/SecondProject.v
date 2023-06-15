@@ -1081,20 +1081,17 @@ Proof.
   - eapply hoare_consequence_pre.
     + apply hoare_assert.
     + destruct H as [H1 H2]. unfold "->>" in *. intros.
-      specialize (H1 st). specialize (H2 st). split.
-      -- admit.
+      specialize (H1 st). specialize (H2 st). split; eauto.
       -- admit.
 
   (* Assume *)
   - eapply hoare_consequence_pre.
     + apply hoare_assume.
     + unfold "->>" in *. intros. subst. specialize (H st). simpl. admit.
-      
   
   (* NonDetChoice *)
   - eapply hoare_consequence_pre; eauto. apply hoare_choice'. 
-  -- apply IHd1.   
-    specialize (IHd1 P). specialize (IHd2 P). admit.
+  -- apply IHd1. specialize (IHd1 P). specialize (IHd2 P). admit.
 Admitted.
 
 
