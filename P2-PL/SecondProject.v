@@ -755,17 +755,17 @@ Notation "{{ P }} d"
 (* TODO: notation for the three new constructs *)
 
 (* DONE: REVIEW WITH TEAM *)
-Notation "'assert' b {{ P }}" := (DCAssert b P)
-      (in custom com at level 8, 
-      b custom com at level 0, P constr) : dcom_scope.
+Notation "'assert' b {{ P }}"
+      := (DCAssert b P)
+      (in custom com at level 8, b custom com at level 0, P constr) : dcom_scope.
 
-Notation "'assume' b {{ P }}" := (DCAssume b P)
-    (in custom com at level 8, 
-    b custom com at level 0, P constr) : dcom_scope.
+Notation "'assume' b {{ P }}"
+      := (DCAssume b P)
+      (in custom com at level 8, b custom com at level 0, P constr) : dcom_scope.
 
-Notation "d1 !! d2" :=
-  (DCNonDetChoice d1 d2)
-    (in custom com at level 90, right associativity) : dcom_scope.
+Notation "d1 !! d2"
+      := (DCNonDetChoice d1 d2)
+      (in custom com at level 90, right associativity) : dcom_scope.
 (* DONE: REVIEW WITH TEAM *)
 
 Local Open Scope dcom_scope.
@@ -1014,10 +1014,10 @@ Fixpoint verification_conditions (P : Assertion) (d : dcom) : Prop :=
       /\ (post d ->> Q)
 
   (* DONE: REVIEW WITH TEAM *)
-  | DCAssume b Q =>
-    ((~b \/ P) ->> Q)%assertion
   | DCAssert b Q =>
     ((P /\ b) ->> Q)%assertion
+  | DCAssume b Q =>
+    ((~b \/ P) ->> Q)%assertion
   | DCNonDetChoice d1 d2 =>
       verification_conditions P d1
       \/ verification_conditions P d2
@@ -1076,13 +1076,15 @@ Proof.
     + admit.
 
   (* Assume *)
-  - admit.
+  - eapply hoare_consequence_pre.
+    + apply hoare_assume.
+    + eauto.
   
   (* NonDetChoice *)
-  - eapply hoare_consequence_pre; eauto. specialize (IHd1 P). 
-    specialize (IHd2 P). apply hoare_choice'. 
-    ++ apply IHd1. destruct H. assumption. admit.
-    ++ admit.
+  - eapply hoare_consequence_pre; eauto.
+    specialize (IHd1 P). specialize (IHd2 P). apply hoare_choice'.
+    + apply IHd1. admit.
+    + apply IHd2. admit.
 Admitted.
 
 
