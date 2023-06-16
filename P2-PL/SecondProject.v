@@ -592,14 +592,8 @@ Lemma one_step_aeval_a: forall st a a',
   aeval st a = aeval st a'.
 Proof.
   (* TODO (Hint: you can prove this by induction on a) *)
-  intros. induction a.
-  - inversion H.
-  - inversion H. simpl. reflexivity.
-  - inversion H. subst.
-    + rewrite <- IHa1. admit.
-    ++ admit.
-    + admit.
-Admitted.
+  intros. induction H; simpl; auto.
+Qed.
 
 
 (* ================================================================= *)
