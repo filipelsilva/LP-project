@@ -1020,7 +1020,7 @@ Fixpoint verification_conditions (P : Assertion) (d : dcom) : Prop :=
     ((b \/ P) ->> Q)%assertion
   | DCNonDetChoice d1 d2 =>
       verification_conditions P d1
-      \/ verification_conditions P d2
+      /\ verification_conditions P d2
   (* DONE: REVIEW WITH TEAM *)
   end.
 
@@ -1068,23 +1068,21 @@ Proof.
   - (* Post *)
     destruct H as [Hd HQ].
     eapply hoare_consequence_post; eauto.
-
-  (* TODO *)
+  (* DONE *)
   (* Assert *)
   - eapply hoare_consequence_pre.
     + apply hoare_assert.
     + eauto.
-
   (* Assume *)
   - eapply hoare_consequence_pre.
     + apply hoare_assume.
     + eauto.
-  
   (* NonDetChoice *)
-  - eapply hoare_consequence_pre; eauto. apply hoare_choice'. 
-  -- apply IHd1. specialize (IHd1 P). specialize (IHd2 P). admit.
-  -- admit.
-Admitted.
+  - eapply hoare_consequence_pre; eauto; inversion H; subst.
+    + apply hoare_choice'. 
+    -- apply IHd1. apply H0.
+    -- apply IHd2. apply H1.
+Qed.
 
 
 (** Now that all the pieces are in place, we can define what it means
